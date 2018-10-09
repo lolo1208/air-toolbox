@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<main:Main xmlns:fx="http://ns.adobe.com/mxml/2009"
+		   xmlns:s="library://ns.adobe.com/flex/spark"
+		   xmlns:mx="library://ns.adobe.com/flex/mx"
+		   xmlns:main="app.main.*"
+		   xmlns:controls="toolbox.controls.*"
+		   width="600" height="400"
+		   frameRate="60" showStatusBar="false"
+		   addedToStage="addedToStageHandler(event)"
+		   creationComplete="creationCompleteHandler(event)"
+		   >
+	
+	
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Style source="styles.css" />
+	
+	
+	<s:Button id="uiPackagerBtn" x="30" y="70" width="100" height="40" label="界面打包" fontSize="14"
+			  click="toolBtn_clickHandler(event)" />
+	<s:Button id="aniPackagerBtn" x="150" y="70" width="100" height="40" label="动画打包" fontSize="14"
+			  click="toolBtn_clickHandler(event)" />
+	<s:Button id="skinEditorBtn" x="270" y="70" width="100" height="40" label="皮肤编辑器" fontSize="14"
+			  click="toolBtn_clickHandler(event)" />
+	<s:Button id="uiEditorBtn" x="390" y="70" width="100" height="40" label="界面编辑器" fontSize="14"
+			  click="toolBtn_clickHandler(event)" />
+	
+	
+	<s:Button id="ldToolBtn" x="30" y="150" width="100" height="40" label="文件包工具" fontSize="14"
+			  click="toolBtn_clickHandler(event)" />
+	<s:Button id="batchToolBtn" x="150" y="150" width="100" height="40" label="批处理工具" fontSize="14"
+			  click="toolBtn_clickHandler(event)" />
+	<s:Button x="270" y="150" width="100" height="40" label="MC → PNG" enabled="false" fontSize="14"/>
+	<s:Button x="390" y="150" width="100" height="40" label="图片压缩" enabled="false" fontSize="14"/>
+	
+	
+	<s:Button id="mapEditorBtn" x="30" y="230" width="100" height="40" label="地图编辑器" fontSize="14"
+			  click="toolBtn_clickHandler(event)" />
+	
+	
+	<s:Label id="versionText" x="490" y="380" width="100" color="#666666" text="ver: 0.0.0"
+			 textAlign="right"/>
+	<s:Button id="apiBtn" x="30" y="350" width="90" height="25" label="查看框架API"
+			  click="apiBtn_clickHandler(event)"/>
+</main:Main>

@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:c="app.components.*"
+		 fontFamily="微软雅黑"
+		 width="100%" height="120"
+		 creationComplete="creationCompleteHandler(event)"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			import app.common.ImageAssets;
+			import app.layers.ImageLoaderLayer;
+			
+			import lolo.components.ImageLoader;
+			
+			import mx.collections.ArrayList;
+			import mx.events.FlexEvent;
+			
+			import spark.events.IndexChangeEvent;
+			
+			import toolbox.Toolbox;
+			
+			
+			/**
+			 * ImageLoader属性
+			 */
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				fileNameTypeDDL.dataProvider = new ArrayList([ "正常", "替代" ]);
+				extensionDDL.dataProvider = new ArrayList([ "png", "jpg", "gif" ]);
+			}
+			
+			
+			/**
+			 * 更新显示内容
+			 */
+			public function update():void
+			{
+				if(directoryDDL.dataProvider == null) refreshImgDir();
+				
+				var i:int;
+				directoryDDL.selectedIndex = 0;
+				for(i = 0; i < directoryDDL.dataProvider.length; i++) {
+					if(directoryDDL.dataProvider.getItemAt(i).name == imageLoader.directory) {
+						directoryDDL.selectedIndex = i;
+						break;
+					}
+				}
+				
+				fileNameDDL.dataProvider = directoryDDL.selectedItem.files;
+				fileNameDDL.selectedIndex = 0;
+				for(i = 0; i < fileNameDDL.dataProvider.length; i++) {
+					if(fileNameDDL.dataProvider.getItemAt(i).name == imageLoader.fileName) {
+						fileNameDDL.selectedIndex = i;
+						break;
+					}
+				}
+				
+				extensionDDL.selectedItem = fileNameDDL.selectedItem.extension;
+				
+				fileNameTypeDDL.selectedIndex = selectedLayer.isDisplay ? 0 : 1;
+			}
+			
+			
+			
+			/**
+			 * directory
+			 */
+			protected function directoryDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				selectedLayer.change("directory", directoryDDL.selectedItem.name);
+				
+				fileNameDDL.dataProvider = directoryDDL.selectedItem.files;
+				fileNameDDL.selectedIndex = fileNameDDL.dataProvider.length > 1 ? 1 : 0;
+				fileNameDDL_changeHandler();
+			}
+			
+			
+			/**
+			 * 刷新 ImageLoader directory 列表
+			 */
+			private function refreshImgDir():void
+			{
+				ImageLoader.cache.clear();
+				
+				directoryDDL.dataProvider = new ArrayList([{
+					name	: "",
+					files	: new ArrayList([{name:"", extension:"jpg"}])
+				}]);
+				parseImgDir(new File(Toolbox.resRootDir + "img"), null, null);
+			}
+			
+			protected function refreshDirBtn_clickHandler(event:MouseEvent=null):void
+			{
+				refreshImgDir();
+				AppCommon.prop.update();
+			}
+			
+			private function parseImgDir(dir:File, prefix:String, dirFiles:ArrayList):void
+			{
+				var arr:Array = dir.getDirectoryListing();
+				for(var i:int = 0; i < arr.length; i++) {
+					var file:File = arr[i];
+					if(file.name == ".svn") continue;
+					if(file.isDirectory) {
+						var name:String = (prefix == null) ? file.name : prefix + "/" + file.name;
+						var files:ArrayList = new ArrayList([{name:"", extension:"jpg"}]);
+						directoryDDL.dataProvider.addItem({ name:name, files:files });
+						parseImgDir(file, name, files);
+					}
+					else {
+						if(dirFiles != null) {
+							var arr2:Array = file.name.split(".");
+							arr2.pop();
+							dirFiles.addItem({ name:arr2.join(), extension:file.extension.toLocaleLowerCase() });
+						}
+					}
+				}
+			}
+			
+			
+			
+			
+			
+			/**
+			 * fileName
+			 */
+			protected function fileNameDDL_changeHandler(event:IndexChangeEvent=null):void
+			{
+				extensionDDL.selectedItem = fileNameDDL.selectedItem.extension;
+				imageLoader.extension = extensionDDL.selectedItem;
+				
+				selectedLayer.change("fileName", fileNameDDL.selectedItem.name);
+			}
+			
+			
+			/**
+			 * fileName 类型
+			 */
+			protected function fileNameTypeDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				selectedLayer.isDisplay = (fileNameTypeDDL.selectedIndex == 0);
+			}
+			
+			
+			
+			
+			
+			/**
+			 * extension
+			 */
+			protected function extensionDDL_changeHandler(event:IndexChangeEvent=null):void
+			{
+				selectedLayer.change("extension", extensionDDL.selectedItem);
+			}
+			
+			
+			
+			
+			/**
+			 * 当前选中的图层
+			 */
+			private function get selectedLayer():ImageLoaderLayer
+			{
+				return AppCommon.controller.selectedLayer as ImageLoaderLayer;
+			}
+			
+			private function get imageLoader():ImageLoader { return selectedLayer.element as ImageLoader; }
+		]]>
+	</fx:Script>
+	
+	
+	
+	<s:Label x="-5" y="9" width="85" height="25" fontSize="11" text="directory："  textAlign="right" verticalAlign="middle"/>
+	
+	<s:DropDownList id="directoryDDL" x="80" y="8" width="130" height="25" labelField="name"
+					change="directoryDDL_changeHandler(event)"
+					/>
+	
+	<s:Button id="refreshDirBtn" x="215" y="8" width="25" height="25"
+			  icon="{ImageAssets.Refresh}" toolTip="刷新 directory 列表"
+			  click="refreshDirBtn_clickHandler(event)"
+			  />
+	
+	
+
+	
+	<s:Label x="-5" y="49" width="85" height="25" fontSize="11" text="fileName：" textAlign="right" verticalAlign="middle"/>
+	
+	<s:DropDownList id="fileNameDDL" x="80" y="48" width="90" height="25" labelField="name"
+					change="fileNameDDL_changeHandler(event)" />
+	
+	<s:DropDownList id="fileNameTypeDDL" x="175" y="48" width="65" height="25"
+					toolTip="正常：在正式的项目中使用该 fileName &#13;替代：只在编辑器中使用该 fileName 查看效果"
+					change="fileNameTypeDDL_changeHandler(event)" />
+	
+	
+	
+	<s:Label x="-5" y="89" width="85" height="25" fontSize="11" text="extension：" textAlign="right" verticalAlign="middle"/>
+	<s:DropDownList id="extensionDDL" x="80" y="88" width="90" height="25"
+					change="extensionDDL_changeHandler(event)" />
+	
+	
+</s:Group>

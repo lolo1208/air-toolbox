@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dbdMerger:DbdMerger xmlns:fx="http://ns.adobe.com/mxml/2009"
+					 xmlns:s="library://ns.adobe.com/flex/spark"
+					 xmlns:mx="library://ns.adobe.com/flex/mx"
+					 xmlns:dbdMerger="app.dbdMerger.*"
+					 title="DragonBones数据合并"
+					 width="400" height="185"
+					 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.ImageAssets;
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	
+	<s:Label x="23" y="27" text="ZIP：" color="#666666"/>
+	<s:TextInput id="zipText" x="55" y="20" width="300" height="25"
+				 keyUp="zipText_keyUpHandler(event)"
+				 />
+	<s:Button id="zipBtn" x="360" y="20" width="25" height="25"
+			  icon="{ImageAssets.RightArrow}"
+			  click="zipBtn_clickHandler(event)"
+			  />
+	
+	
+	<s:Label x="15" y="67" text="PNG：" color="#666666"/>
+	<s:TextInput id="pngText" x="55" y="60" width="300" height="25"
+				 keyUp="pngText_keyUpHandler(event)"
+				 />
+	<s:Button id="pngBtn" x="360" y="60" width="25" height="25"
+			  icon="{ImageAssets.RightArrow}"
+			  click="pngBtn_clickHandler(event)"
+			  />
+	
+	
+	<s:Label x="20" y="107" text="DIR：" color="#666666"/>
+	<s:TextInput id="dirText" x="55" y="100" width="300" height="25"
+				 keyUp="dirText_keyUpHandler(event)"
+				 />
+	<s:Button id="dirBtn" x="360" y="100" width="25" height="25"
+			  icon="{ImageAssets.RightArrow}"
+			  click="dirBtn_clickHandler(event)"
+			  />
+	
+	
+	<s:CheckBox id="minSizeCB" x="105" y="147" label="最小图像尺寸"/>
+	<s:CheckBox id="compressCB" x="210" y="147" label="压缩图像"/>
+	<s:Button id="exportBtn" x="290" y="140" width="95" height="30"
+			  label="导出" color="#990000" fontSize="18" enabled="false"
+			  click="exportBtn_clickHandler(event)"
+			  />
+	
+	
+</dbdMerger:DbdMerger>

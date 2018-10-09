@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<exportGroup:ExportGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+						 xmlns:s="library://ns.adobe.com/flex/spark" 
+						 xmlns:mx="library://ns.adobe.com/flex/mx"
+						 xmlns:exportGroup="app.exportGroup.*"
+						 width="420" height="550"
+						 creationComplete="creationCompleteHandler(event)"
+						 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.ImageAssets;
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	
+	<s:Label x="0" y="12" text="导出列表："/>
+	<s:Group
+		dragEnter="list_dragEnterHandler(event)"
+		dragDrop="list_dragDropHandler(event)"
+		>
+		<s:List id="list" x="0" y="35" width="420" height="445"
+				itemRenderer="app.exportGroup.ExportListItemRenderer"
+				dataProvider="{listData}"
+				/>
+	</s:Group>
+	
+	
+	<s:Button id="clearBtn" x="395" y="0" width="25" height="25"
+			  icon="{ImageAssets.Clear}" toolTip="清空导出列表"
+			  click="clearBtn_clickHandler(event)"
+			  />
+	<s:Button id="removeBtn" x="365" y="0" width="25" height="25"
+			  icon="{ImageAssets.Remove}" toolTip="移除所选item"
+			  click="removeBtn_clickHandler(event)"
+			  />
+	
+	<s:Label x="170" y="497" text="MaxRects："/>
+	<s:TextInput id="mrwText" x="240" y="490" width="45" height="25" restrict="0-9"
+				 text="2048" toolTip="纹理的最大宽度，不必是2的幂次方" />
+	<s:TextInput id="mrhText" x="291" y="490" width="45" height="25" restrict="0-9"
+				 text="2048" toolTip="纹理的最大高度，不必是2的幂次方" />
+	
+		
+		
+	<s:CheckBox id="compressCB" x="345" y="490" label="压缩图像"/>
+	
+	<s:Button id="exportBtn" x="345" y="515" width="75" height="35"
+			  label="导出" color="#990000" fontSize="14"
+			  click="exportBtn_clickHandler(event)"
+			  />
+	<s:DropDownList id="mrmDDL" x="170" y="525" width="165" height="25"
+					toolTip="不同的资源所对应的最优参数是不一样的。您应该尝试改变该参数，再选择对于当前资源最合适的参数打包" />
+</exportGroup:ExportGroup>

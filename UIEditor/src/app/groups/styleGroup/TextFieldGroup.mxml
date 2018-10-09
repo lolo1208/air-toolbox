@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:c="app.components.*"
+		 fontFamily="微软雅黑"
+		 width="100%" height="160"
+		 creationComplete="creationCompleteHandler(event)"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			import app.common.ImageAssets;
+			import app.layers.Layer;
+			import app.utils.LayerUtil;
+			
+			import lolo.display.BaseTextField;
+			import lolo.utils.StringUtil;
+			
+			import mx.events.ColorPickerEvent;
+			import mx.events.FlexEvent;
+			
+			import spark.events.IndexChangeEvent;
+			import spark.events.TextOperationEvent;
+			
+			
+			
+			/**
+			 * 文本都有的样式
+			 */
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				
+			}
+			
+			
+			/**
+			 * 更新显示内容
+			 */
+			public function update():void
+			{
+				var style:Object = selectedLayer.style;
+				
+				fontText.editable = !textField.embedFonts;
+				fontText.text = style.font;
+				sizeText.text = style.size;
+				colorP.selectedColor = uint(style.color);
+				
+				if(style.stroke != null && style.stroke != "none") {
+					strokeCB.selected = strokeP.enabled = true;
+					strokeP.selectedColor = uint(style.stroke);
+				}
+				else {
+					strokeCB.selected = strokeP.enabled = false;
+				}
+				
+				if(style.align == "left") alignBB.selectedIndex = 0;
+				else alignBB.selectedIndex = (style.align == "center") ? 1 : 2;
+				boldBtn.selected = style.bold;
+				underlineBtn.selected = style.underline;
+				
+				leadingHS.value = style.leading;
+			}
+			
+			
+			
+			/**
+			 * font
+			 */
+			protected function fontText_changeHandler(event:TextOperationEvent):void
+			{
+				selectedLayer.setStyle("font", fontText.text);
+				AppCommon.controller.updateFrame();
+			}
+			
+			
+			/**
+			 * size
+			 */
+			protected function sizeText_changeHandler(event:TextOperationEvent):void
+			{
+				selectedLayer.setStyle("size", int(sizeText.text));
+				AppCommon.controller.updateFrame();
+			}
+			
+			
+			/**
+			 * color
+			 */
+			protected function colorP_changeHandler(event:ColorPickerEvent):void
+			{
+				selectedLayer.setStyle("color", StringUtil.getColorString(colorP.selectedColor));
+			}
+			
+			
+			/**
+			 * stroke
+			 */
+			protected function stroke_changeHandler(event:Event):void
+			{
+				selectedLayer.setStyle("stroke", strokeCB.selected ? StringUtil.getColorString(strokeP.selectedColor) : "none");
+				strokeP.enabled = strokeCB.selected;
+			}
+			
+			
+			/**
+			 * align
+			 */
+			protected function alignBB_changeHandler(event:IndexChangeEvent):void
+			{
+				selectedLayer.setStyle("align", alignBB.selectedItem.value);
+			}
+			
+			
+			/**
+			 * bold
+			 */
+			protected function boldBtn_clickHandler(event:MouseEvent):void
+			{
+				selectedLayer.setStyle("bold", boldBtn.selected);
+				AppCommon.controller.updateFrame();
+			}
+			
+			
+			/**
+			 * underline
+			 */
+			protected function underlineBtn_clickHandler(event:MouseEvent):void
+			{
+				selectedLayer.setStyle("underline", underlineBtn.selected);
+			}
+			
+			
+			/**
+			 * leading
+			 */
+			protected function leading_changeHandler(event:Event):void
+			{
+				selectedLayer.setStyle("leading", leadingNS.value);
+				AppCommon.controller.updateFrame();
+			}
+			
+			
+			
+			
+			/**
+			 * 当前选中的图层
+			 */
+			private function get selectedLayer():Layer { return AppCommon.controller.selectedLayer; }
+			
+			private function get textField():BaseTextField { return LayerUtil.getTextField(); }
+		]]>
+	</fx:Script>
+	
+	
+	<fx:Declarations>
+	</fx:Declarations>
+	
+	
+	<s:Rect x="1" width="100%" height="1"><s:fill><s:SolidColor color="#CCCCCC"/></s:fill></s:Rect>
+	
+	
+	
+	<s:Label x="0" y="8" width="80" height="25" text="font：" textAlign="right" verticalAlign="middle"
+			 toolTip="字体名称、文本尺寸、文本颜色" />
+	<c:PTextInput id="fontText" x="80" y="8" width="80" height="25" restrict="^ 　" toolTip="字体名称"
+				  change="fontText_changeHandler(event)" />
+	<c:PTextInput id="sizeText" x="170" y="8" width="35" height="25" toolTip="文本尺寸"
+				  restrict="0-9" maxChars="2"
+				  change="sizeText_changeHandler(event)" />
+	<mx:ColorPicker id="colorP" x="215" y="8" width="25" height="25" toolTip="文本颜色"
+					change="colorP_changeHandler(event)"/>
+	
+	
+	
+	<s:Label x="0" y="48" width="80" height="25" text="stroke：" textAlign="right" verticalAlign="middle"
+			 toolTip="描边" />
+	<s:CheckBox id="strokeCB" x="80" y="50" label="启用"
+				click="stroke_changeHandler(event)"/>
+	<mx:ColorPicker id="strokeP" x="130" y="48" width="25" height="25" toolTip="描边颜色"
+					change="stroke_changeHandler(event)"/>
+	
+	
+	
+	<s:Label x="0" y="88" width="80" height="25" text="align：" textAlign="right" verticalAlign="middle"
+			 toolTip="水平对齐方式" />
+	<s:ButtonBar id="alignBB" x="80" y="88" width="80" height="25"
+				 iconField="icon" requireSelection="true"
+				 change="alignBB_changeHandler(event)" >
+		<s:dataProvider>
+			<s:ArrayList>
+				<fx:Object icon="{ImageAssets.Style_Left}" value="left" label="左对齐" />
+				<fx:Object icon="{ImageAssets.Style_Center}" value="center" label="居中对齐" />
+				<fx:Object icon="{ImageAssets.Style_Right}" value="right" label="右对齐" />
+			</s:ArrayList>
+		</s:dataProvider>
+	</s:ButtonBar>
+	<s:ToggleButton id="boldBtn" x="170" y="88" width="26" height="25"
+					icon="{ImageAssets.Style_Bold}" toolTip="粗体"
+					click="boldBtn_clickHandler(event)" />
+	<s:ToggleButton id="underlineBtn" x="195" y="88" width="26" height="25"
+					icon="{ImageAssets.Style_Underline}" toolTip="下划线"
+					click="underlineBtn_clickHandler(event)" />
+	
+	
+	
+	<s:Label y="128" width="80" height="25" text="leading：" textAlign="right" verticalAlign="middle"
+			 toolTip="行与行之间的垂直间距" />
+	<s:NumericStepper id="leadingNS" x="80" y="128" width="50" height="25" maximum="99" minimum="-99"
+					  stepSize="1" value="{leadingHS.value}"
+					  change="leading_changeHandler(event)" />
+	<s:HSlider id="leadingHS" x="140" y="137" width="55" maximum="50" minimum="-50"
+			   stepSize="1" value="{leadingNS.value}"
+			   change="leading_changeHandler(event)" />
+	
+	
+</s:Group>

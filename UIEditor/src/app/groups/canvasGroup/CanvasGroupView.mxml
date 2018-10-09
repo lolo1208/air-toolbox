@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<canvasGroup:CanvasGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				 xmlns:s="library://ns.adobe.com/flex/spark" 
+				 xmlns:mx="library://ns.adobe.com/flex/mx"
+				 xmlns:canvasGroup="app.groups.canvasGroup.*"
+				 width="280" height="80"
+				 creationComplete="creationCompleteHandler(event)"
+				 addedToStage="addedToStageHandler(event)"
+				 resize="resizeHandler(event)"
+				 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.ImageAssets;
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	
+	<s:TabBar id="containerTB" width="220" height="29" labelField="name"
+			  change="containerTB_changeHandler(event)"
+			  click="containerTB_changeHandler(event)"
+			  />
+	
+	<s:Button id="addContainerBtn" x="230" y="5" width="18" height="18"
+			  icon="{ImageAssets.Add}" toolTip="添加一个容器"
+			  click="addContainerBtn_clickHandler(event)"
+			  />
+	
+	<s:Button id="removeContainerBtn" x="255" y="5" width="18" height="18"
+			  icon="{ImageAssets.Remove}" toolTip="移除当前容器"
+			  click="removeContainerBtn_clickHandler(event)"
+			  />
+	
+	<canvasGroup:ToolbarView id="toolbar" x="20" y="36" />
+	
+	<canvasGroup:CreateContainerPanelView id="createContainerPanel" x="-10" y="90" />
+	
+</canvasGroup:CanvasGroup>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ldUpdate:LdUpdate xmlns:fx="http://ns.adobe.com/mxml/2009"
+			 xmlns:s="library://ns.adobe.com/flex/spark"
+			 xmlns:mx="library://ns.adobe.com/flex/mx"
+			 xmlns:ldUpdate="app.ldUpdate.*"
+			 width="400" height="100" title="数据包更新"
+			 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.ImageAssets;
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	
+	<s:Label x="15" y="20" height="25" color="#666666" text="文件夹：" verticalAlign="middle"/>
+	<s:TextInput id="dirText" x="65" y="20" width="290" height="25"/>
+	<s:Button id="dirBtn" x="360" y="20" width="25" height="25"
+			  icon="{ImageAssets.RightArrow}"
+			  click="dirBtn_clickHandler(event)"
+			  />
+	
+	<s:Button id="updateBtn" x="290" y="55" width="95" height="30"
+			  label="更新" color="#990000" fontSize="18"
+			  click="updateBtn_clickHandler(event)"
+			  />
+</ldUpdate:LdUpdate>

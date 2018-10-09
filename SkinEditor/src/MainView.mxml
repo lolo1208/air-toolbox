@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<main:Main xmlns:fx="http://ns.adobe.com/mxml/2009"
+		   xmlns:s="library://ns.adobe.com/flex/spark"
+		   xmlns:mx="library://ns.adobe.com/flex/mx"
+		   xmlns:main="app.main.*"
+		   xmlns:skinListGroup="app.skinListGroup.*"
+		   xmlns:canvasGroup="app.canvasGroup.*"
+		   xmlns:createPanel="app.createPanel.*"
+		   width="800" height="600"
+		   creationPolicy="all" frameRate="60" showStatusBar="false"
+		   creationComplete="creationCompleteHandler(event)"
+		   addedToStage="addedToStageHandler(event)"
+		   resize="resizeHandler(event)"
+		   >
+	
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Style source="styles.css" />
+	
+	
+	<mx:MenuBar id="menuBar" x="0" y="0" width="640" height="25" labelField="label"
+				dataProvider="{menuData}"
+				itemClick="menuBar_itemClickHandler(event)"
+				/>
+	
+	
+	<skinListGroup:SkinListGroupView id="skinListGroup" x="0" y="30" />
+	
+	
+	<canvasGroup:CanvasGroupView id="canvasGroup" x="300" y="30" />
+	<createPanel:CreatePanelView id="createPanel" x="150" y="370">
+	</createPanel:CreatePanelView>
+	
+	
+</main:Main>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<p:PropGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				 xmlns:s="library://ns.adobe.com/flex/spark" 
+				 xmlns:mx="library://ns.adobe.com/flex/mx"
+				 xmlns:c="app.components.*"
+				 xmlns:p="app.groups.propGroup.*"
+				 width="100%" height="100%"
+				 creationComplete="creationCompleteHandler(event)"
+				 addedToStage="addedToStageHandler(event)"
+				 resize="resizeHandler(event)"
+				 >
+	
+	<s:Scroller id="propsScroller" width="100%" height="100%">
+		<s:VGroup id="listVG" width="100%" height="100%" gap="-1">
+			
+			<p:Common1Group id="common1G" />
+			<p:Common2Group id="common2G" />
+			<p:Common3Group id="common3G" />
+			<p:ContainerGroup id="containerG" />
+			<p:TextFieldGroup id="textFieldG" />
+			<p:AnimationGroup id="animationG" />
+			<p:ImageLoaderGroup id="imageLoaderG" />
+			<p:ListGroup id="listG" />
+			<p:ScrollBarGroup id="scrollBarG" />
+			<p:TouchScrollBarGroup id="touchScrollBarG" />
+			<p:PageGroup id="pageG" />
+			
+			<p:StageLayoutGroup id="stageLayoutG" />
+			<p:OtherPropGroup id="otherPropG" />
+			<p:VarsGroup id="varsG" />
+			<p:TextGroup id="textG" />
+			<p:ButtonLabelGroup id="buttonLabelG" />
+			<p:ArtTextGroup id="artTextG" />
+			<p:DefinitionGroup id="definitionG" />
+			
+		</s:VGroup>
+	</s:Scroller>
+	
+</p:PropGroup>

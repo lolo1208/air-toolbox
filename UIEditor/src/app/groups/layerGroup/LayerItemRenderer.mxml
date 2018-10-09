@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" 
+				autoDrawBackground="true"
+				width="100%" height="28"
+				dataChange="dataChangeHandler(event)"
+				>
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			import app.common.ImageAssets;
+			import app.common.LayerConstants;
+			import app.effects.AppEffect;
+			import app.layers.Layer;
+			import app.utils.LayerUtil;
+			
+			import mx.events.FlexEvent;
+			
+			
+			
+			override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
+			{
+				super.updateDisplayList(unscaledWidth, unscaledHeight);
+				
+				ignore.x = (width > 250) ? 200 : 180;
+				lock.x = ignore.x + 20;
+				eye.x = lock.x + 20;
+			}
+			
+			
+			
+			protected function dataChangeHandler(event:FlexEvent):void
+			{
+				if(data == null) return;
+				
+				updateLayerName();
+				updateVEStates();
+				
+				switch(layer.type)
+				{
+					case LayerConstants.BITMAP_SPRITE:
+						img.source = ImageAssets.UI;
+						img.x = 6;
+						img.y = 8;
+						break;
+					
+					case LayerConstants.ANIMATION:
+						img.source = ImageAssets.Animation;
+						img.x = 5;
+						img.y = 7;
+						break;
+				}
+				
+				if(LayerUtil.isComponent(layer)) {
+					img.x = 5;
+					img.y = 5;
+				}
+				
+				if(LayerUtil.isBaseTextField(layer))		img.source = ImageAssets.C_Label;
+				else if(LayerUtil.isInputText(layer))		img.source = ImageAssets.C_InputText;
+				
+				else if(LayerUtil.isModalBackground(layer))	img.source = ImageAssets.C_ModalBackground;
+				else if(LayerUtil.isImageLoader(layer))		img.source = ImageAssets.C_ImageLoader;
+				
+				else if(LayerUtil.isRadioButton(layer))		img.source = ImageAssets.C_RadioButton;
+				else if(LayerUtil.isCheckBox(layer))		img.source = ImageAssets.C_CheckBox;
+				else if(LayerUtil.isButton(layer))			img.source = ImageAssets.C_Button;
+				else if(LayerUtil.isImageButton(layer))		img.source = ImageAssets.C_ImageButton;
+				else if(LayerUtil.isBaseButton(layer))		img.source = ImageAssets.C_BaseButton;
+					
+				else if(LayerUtil.isItemGroup(layer))		img.source = ImageAssets.C_ItemGroup;
+				else if(LayerUtil.isSprite(layer))			img.source = ImageAssets.C_Sprite;
+				else if(LayerUtil.isArtText(layer))			img.source = ImageAssets.C_ArtText;
+				else if(LayerUtil.isDisplayObject(layer))	img.source = ImageAssets.C_DisplayObject;
+					
+				else if(LayerUtil.isPage(layer))			img.source = ImageAssets.C_Page;
+				else if(LayerUtil.isScrollBar(layer))		img.source = ImageAssets.C_ScrollBar;
+				else if(LayerUtil.isScrollList(layer))		img.source = ImageAssets.C_ScrollList;
+				else if(LayerUtil.isPageList(layer))		img.source = ImageAssets.C_PageList;
+				else if(LayerUtil.isList(layer))			img.source = ImageAssets.C_List;
+			}
+			
+			
+			/**
+			 * 更新图层名称
+			 */
+			public function updateLayerName():void
+			{
+				var layer:Layer = AppCommon.layer.getLayerByNO(data.no);
+				if(layer.id.length > 0)
+				{
+					idText.setStyle("color", 0x0);
+					idText.text = layer.id;
+				}
+				else
+				{
+					idText.setStyle("color", 0x999999);
+					idText.text = layer.type.charAt().toUpperCase() + layer.type.substr(1);
+				}
+			}
+			
+			
+			/**
+			 * 更新编辑器中的图层状态
+			 */
+			public function updateVEStates():void
+			{
+				eye.alpha = layer.veEye ? 1 : 0.2;
+				lock.alpha = layer.veLock ? 1 : 0.2;
+				ignore.alpha = layer.veIgnore ? 1 : 0.2;
+			}
+			
+			
+			
+			
+			protected function ignore_clickHandler(event:MouseEvent):void
+			{
+				layer.veIgnore = !layer.veIgnore;
+				updateVEStates();
+			}
+			
+			protected function lock_clickHandler(event:MouseEvent):void
+			{
+				layer.veLock = !layer.veLock;
+				updateVEStates();
+			}
+			
+			protected function eye_clickHandler(event:MouseEvent):void
+			{
+				layer.veEye = !layer.veEye;
+				updateVEStates();
+				
+				if(layer.veEye && !layer.visible)
+					AppEffect.glowFilterAni(AppCommon.prop.common1G["visibleDDL"]);
+			}
+			
+			
+			
+			
+			private function get layer():Layer { return AppCommon.layer.getLayerByNO(data.no); }
+		]]>
+	</fx:Script>
+	
+	<s:Image id="img" />
+	
+	<s:Label id="idText" x="30" y="9" color="#333333" />
+	
+	<s:Image id="ignore" x="180" y="7" source="{ImageAssets.Ignore}" toolTip="在生成界面时，是否忽略该图层"
+			 click="ignore_clickHandler(event)" />
+	
+	<s:Image id="lock" x="200" y="7" source="{ImageAssets.Lock}" toolTip="是否锁定（无法移动）该图层"
+			 click="lock_clickHandler(event)" />
+	
+	<s:Image id="eye" x="220" y="7" source="{ImageAssets.Eye}" toolTip="图层在编辑器中是否可见"
+			 click="eye_clickHandler(event)" />
+
+	
+</s:ItemRenderer>

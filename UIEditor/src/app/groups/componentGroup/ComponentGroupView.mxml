@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<componentGroup:ComponentGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				 xmlns:s="library://ns.adobe.com/flex/spark" 
+				 xmlns:mx="library://ns.adobe.com/flex/mx"
+				 xmlns:componentGroup="app.groups.componentGroup.*"
+				 width="100%" height="100%"
+				 creationComplete="creationCompleteHandler(event)"
+				 resize="resizeHandler(event)"
+				 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.ImageAssets;
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<s:List id="componentList" x="1" borderVisible="false"
+			dragEnabled="true"
+			itemRenderer="app.groups.componentGroup.ComponentItemRenderer"
+			/>
+</componentGroup:ComponentGroup>

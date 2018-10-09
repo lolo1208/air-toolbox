@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<propertiesPanel:PropertiesPanel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+								 xmlns:s="library://ns.adobe.com/flex/spark" 
+								 xmlns:mx="library://ns.adobe.com/flex/mx"
+								 xmlns:propertiesPanel="app.propertiesPanel.*"
+								 width="230" height="300" title="　  属性"
+								 creationComplete="creationCompleteHandler(event)"
+								 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.ImageAssets;
+		]]>
+	</fx:Script>
+	
+	
+	<fx:Declarations>
+		<s:RadioButtonGroup id="typeRG" change="typeRG_changeHandler(event)" />
+	</fx:Declarations>
+	
+	
+	<s:Image x="5" y="-24" source="{ImageAssets.Properties}" />
+	
+	
+	<s:Scroller y="10" width="100%" height="100%">
+		<s:VGroup id="listVG" width="100%" height="100%" gap="-1">
+			
+			<s:Group id="nameGroup" width="100%" height="40">
+				<s:Label y="8" width="60" height="25" text="name：" textAlign="right" verticalAlign="middle"/>
+				<s:Label id="nameText" x="60" y="8" width="145" height="25" textAlign="left" verticalAlign="middle"/>
+			</s:Group>
+			
+			<s:Group id="xyGroup" width="100%" height="40">
+				<s:Label y="8" width="60" height="25" text="x：" textAlign="right" verticalAlign="middle"/>
+				<s:TextInput id="xText" x="60" y="8" width="45" height="25" restrict="0-9"
+							 change="xText_changeHandler(event)" />
+				<s:Label x="110" y="8" width="50" height="25" text="y：" textAlign="right" verticalAlign="middle"/>
+				<s:TextInput id="yText" x="160" y="8" width="45" height="25" restrict="0-9"
+							 change="yText_changeHandler(event)" />
+			</s:Group>
+			
+			<s:Group id="whGroup" width="100%" height="40">
+				<s:Label y="8" width="60" height="25" text="width：" textAlign="right" verticalAlign="middle"/>
+				<s:TextInput id="widthText" x="60" y="8" width="45" height="25" restrict="0-9"
+							 change="widthText_changeHandler(event)" />
+				<s:Label x="110" y="8" width="50" height="25" text="height：" textAlign="right" verticalAlign="middle"/>
+				<s:TextInput id="heightText" x="160" y="8" width="45" height="25" restrict="0-9"
+							 change="heightText_changeHandler(event)" />
+			</s:Group>
+			
+			<s:Group id="pointGroup" width="100%" height="40">
+				<s:Label y="8" width="60" height="25" text="坐标：" textAlign="right" verticalAlign="middle"/>
+				<s:Label id="pointText" x="60" y="8" width="145" height="25" textAlign="left" verticalAlign="middle"/>
+			</s:Group>
+			
+			<s:Group id="typeGroup" width="100%" height="40">
+				<s:Label y="8" width="60" height="25" text="类型：" textAlign="right" verticalAlign="middle"/>
+				<s:RadioButton x="60" y="10" label="普通" groupName="typeRG" />
+				<s:RadioButton x="112" y="10" label="障碍" groupName="typeRG" toolTip="不可通行的障碍区块" />
+				<s:RadioButton x="162" y="10" label="遮挡" groupName="typeRG" toolTip="被遮挡的区块（Avatar移动至该区块时，将会半透明显示）" />
+			</s:Group>
+			
+			<s:Group id="featureGroup" width="100%" height="40">
+				<s:Label y="8" width="60" height="25" text="特性：" toolTip="区块特性"
+						 textAlign="right" verticalAlign="middle"/>
+				<s:TextInput id="featureText" x="60" y="8" width="60" height="25"
+							 change="featureText_changeHandler(event)" />
+				
+				<s:Label x="125" y="8" width="40" height="25" text="索引：" toolTip="区块特性索引"
+						 textAlign="right" verticalAlign="middle" />
+				<s:TextInput id="indexText" x="165" y="8" width="40" height="25" restrict="0-9"
+							 change="indexText_changeHandler(event)" />
+			</s:Group>
+			
+		</s:VGroup>
+	</s:Scroller>
+	
+	
+</propertiesPanel:PropertiesPanel>

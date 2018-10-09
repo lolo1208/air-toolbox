@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<main:Main xmlns:fx="http://ns.adobe.com/mxml/2009"
+		   xmlns:s="library://ns.adobe.com/flex/spark"
+		   xmlns:mx="library://ns.adobe.com/flex/mx"
+		   xmlns:main="app.main.*"
+		   xmlns:ldUpdate="app.ldUpdate.*"
+		   xmlns:logging="app.logging.*"
+		   xmlns:dbdMerger="app.dbdMerger.*"
+		   xmlns:ldExport="app.ldExport.*"
+		   creationPolicy="all" showStatusBar="false"
+		   width="890" height="400" frameRate="60"
+		   addedToStage="addedToStageHandler(event)"
+		   creationComplete="creationCompleteHandler(event)"
+		   >
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<fx:Style source="styles.css" />
+	
+	
+	
+	<mx:MenuBar id="menuBar" x="0" y="0" width="890" height="25" labelField="label"
+				dataProvider="{menuData}"
+				itemClick="menuBar_itemClickHandler(event)"
+				/>
+	
+	<ldUpdate:LdUpdateView id="ldUpdate" x="30" y="60" />
+	<dbdMerger:DbdMergerView id="dbdMerger" x="460" y="60" />
+	<ldExport:LdExportView id="ldExport" x="30" y="190" />
+	
+	<logging:LoggerView id="logger" x="460" y="270"></logging:LoggerView>
+	
+	
+</main:Main>

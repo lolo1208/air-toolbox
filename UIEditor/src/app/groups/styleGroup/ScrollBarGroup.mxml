@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:c="app.components.*"
+		 fontFamily="微软雅黑"
+		 width="100%" height="240"
+		 creationComplete="creationCompleteHandler(event)"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			import app.common.ImageAssets;
+			
+			import mx.collections.ArrayList;
+			import mx.events.FlexEvent;
+			
+			import spark.events.IndexChangeEvent;
+			import spark.events.TextOperationEvent;
+			
+			import toolbox.Toolbox;
+			import toolbox.config.SkinConfig;
+			
+			
+			
+			/**
+			 * 滚动条样式
+			 */
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				autoThumbSizeDDL.dataProvider = new ArrayList(["true", "false"]);
+			}
+			
+			
+			/**
+			 * 更新显示内容
+			 */
+			public function update():void
+			{
+				var style:Object = selectedLayer.style;
+				if(Toolbox.isASProject) {
+					selectSkinName(upBtnSkinDDL, style.upBtnSkin);
+					selectSkinName(downBtnSkinDDL, style.downBtnSkin);
+					selectSkinName(trackSkinDDL, style.trackSkin);
+					selectSkinName(thumbSkinDDL, style.thumbSkin);
+					
+					autoThumbSizeDDL.selectedIndex = style.autoThumbSize ? 0 : 1;
+					autoThumbSizeDDL_changeHandler();
+				}
+				else {
+					autoThumbSizeDDL.selectedIndex = 0;
+					thumbSNText.text = style.thumbSourceName;
+				}
+				
+				upBtnSkinDDL.enabled
+					= downBtnSkinDDL.enabled
+					= trackSkinDDL.enabled
+					= thumbSkinDDL.enabled
+					= autoThumbSizeDDL.enabled
+					= refreshSkinBtn.enabled
+					= Toolbox.isASProject;
+				
+				thumbSNG.visible = !Toolbox.isASProject;
+				
+				thumbMinSizeText.text = style.thumbMinSize;
+			}
+			
+			
+			
+			/**
+			 * 刷新皮肤列表
+			 */
+			public function refreshSkinList():void
+			{
+				var arrList:ArrayList = new ArrayList( [{ name:"" }].concat(SkinConfig.skinList) );
+				if(Toolbox.isASProject) {
+					upBtnSkinDDL.dataProvider = arrList;
+					downBtnSkinDDL.dataProvider = arrList;
+					trackSkinDDL.dataProvider = arrList;
+					thumbSkinDDL.dataProvider = arrList;
+				}
+				
+				if(parent != null) update();
+			}
+			
+			
+			
+			
+			
+			/**
+			 * 在皮肤列表中选中对应的皮肤
+			 * @param ddl
+			 * @param skinName
+			 */
+			private function selectSkinName(ddl:DropDownList, skinName:String):void
+			{
+				ddl.selectedIndex = -1;
+				for(var i:int = 0; i < ddl.dataProvider.length; i++) {
+					if(ddl.dataProvider.getItemAt(i).name == skinName) {
+						ddl.selectedIndex = i;
+						return;
+					}
+				}
+			}
+			
+			
+			
+			/**
+			 * 点击刷新皮肤列表按钮
+			 * @param event
+			 */
+			protected function refreshSkinBtn_clickHandler(event:MouseEvent):void
+			{
+				this.setFocus();
+				AppCommon.skin.refresh();
+			}
+			
+			
+			/**
+			 * upBtnSkin
+			 */
+			protected function upBtnSkinDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				selectedLayer.setStyle("upBtnSkin", upBtnSkinDDL.selectedItem.name);
+			}
+			
+			
+			/**
+			 * downBtnSkin
+			 */
+			protected function downBtnSkinDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				selectedLayer.setStyle("downBtnSkin", downBtnSkinDDL.selectedItem.name);
+			}
+			
+			
+			/**
+			 * trackSkin
+			 */
+			protected function trackSkinDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				selectedLayer.setStyle("trackSkin", trackSkinDDL.selectedItem.name);
+			}
+			
+			
+			/**
+			 * thumbSkin
+			 */
+			protected function thumbSkinDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				selectedLayer.setStyle("thumbSkin", thumbSkinDDL.selectedItem.name);
+			}
+			
+			
+			/**
+			 * autoThumbSize
+			 */
+			protected function autoThumbSizeDDL_changeHandler(event:IndexChangeEvent=null):void
+			{
+				var autoThumbSize:Boolean = autoThumbSizeDDL.selectedIndex == 0;
+				selectedLayer.setStyle("autoThumbSize", autoThumbSize);
+				thumbMinSizeText.editable = autoThumbSize;
+			}
+			
+			
+			/**
+			 * thumbMinSize
+			 */
+			protected function thumbMinSizeText_changeHandler(event:TextOperationEvent):void
+			{
+				selectedLayer.setStyle("thumbMinSize", int(thumbMinSizeText.text));
+			}
+			
+			
+			
+			/**
+			 * thumbSourceName
+			 */
+			protected function thumbSNText_changeHandler(event:TextOperationEvent):void
+			{
+				selectedLayer.setStyle("thumbSourceName", thumbSNText.text);
+			}
+			
+			
+			
+			
+			
+			/**
+			 * 当前选中的图层
+			 */
+			private function get selectedLayer():*
+			{
+				return AppCommon.controller.selectedLayer;
+			}
+		]]>
+	</fx:Script>
+	
+	
+	<fx:Declarations>
+	</fx:Declarations>
+	
+	
+	<s:Rect x="1" width="100%" height="1"><s:fill><s:SolidColor color="#CCCCCC"/></s:fill></s:Rect>
+	
+	
+	
+	<s:Label x="0" y="8" width="80" height="25" text="upBtn：" textAlign="right" verticalAlign="middle"
+			 toolTip="向上或向左按钮的皮肤名称" />
+	<s:DropDownList id="upBtnSkinDDL" x="80" y="8" width="130" height="25" labelField="name"
+					change="upBtnSkinDDL_changeHandler(event)" />
+	<s:Button id="refreshSkinBtn" x="215" y="8" width="25" height="25" icon="{ImageAssets.Refresh}"
+			  click="refreshSkinBtn_clickHandler(event)"
+			  toolTip="刷新皮肤列表" />
+	
+	
+	
+	<s:Label x="0" y="48" width="80" height="25" text="downBtn："
+			 textAlign="right" toolTip="向下或向右按钮的皮肤名称" verticalAlign="middle"/>
+	<s:DropDownList id="downBtnSkinDDL" x="80" y="48" width="130" height="25" labelField="name"
+					change="downBtnSkinDDL_changeHandler(event)" />
+	
+	
+	
+	<s:Label x="0" y="88" width="80" height="25" text="track：" textAlign="right" verticalAlign="middle"
+			 toolTip="轨道按钮的皮肤名称" />
+	<s:DropDownList id="trackSkinDDL" x="80" y="88" width="130" height="25" labelField="name"
+					change="trackSkinDDL_changeHandler(event)" />
+	
+	
+	
+	<s:Label x="0" y="128" width="80" height="25" text="thumb：" textAlign="right" verticalAlign="middle"
+			 toolTip="滑块按钮的皮肤名称" />
+	<s:DropDownList id="thumbSkinDDL" x="80" y="128" width="130" height="25" labelField="name"
+					change="thumbSkinDDL_changeHandler(event)" />
+	
+	
+	
+	<s:Label x="0" y="168" width="80" height="25" text="thumbSize：" textAlign="right" verticalAlign="middle"
+			 toolTip="滑块是否自动调整尺寸" />
+	<s:DropDownList id="autoThumbSizeDDL" x="80" y="168" width="100" height="25" labelField="name"
+					change="autoThumbSizeDDL_changeHandler(event)" />
+	<c:PTextInput id="thumbMinSizeText" x="190" y="168" width="50" height="25" restrict="0-9" toolTip="滑块自动调整尺寸时，最小值"
+				  change="thumbMinSizeText_changeHandler(event)" />
+	
+	
+	<s:Group id="thumbSNG" x="0" y="200">
+		<s:Label y="2" width="80" height="25" text="thumbSN：" textAlign="right" verticalAlign="middle"
+				 toolTip="滑块Bitmap的sourceName" />
+		<c:PTextInput id="thumbSNText" x="80" width="160" height="25" restrict="a-zA-Z0-9._\-"
+					  change="thumbSNText_changeHandler(event)" />
+	</s:Group>
+	
+</s:Group>

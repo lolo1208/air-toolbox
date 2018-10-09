@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" 
+				autoDrawBackground="true" color="#333333"
+				width="100%" height="25"
+				doubleClickEnabled="true"
+				doubleClick="doubleClickHandler(event)"
+				dataChange="dataChangeHandler(event)"
+				rollOver="rollOverHandler(event)"
+				rollOut="rollOutHandler(event)"
+				>
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			import app.layers.Layer;
+			import app.utils.LayerUtil;
+			
+			import mx.events.FlexEvent;
+			
+			
+			protected function dataChangeHandler(event:FlexEvent):void
+			{
+				nameText.text = data.name;
+			}
+			
+			
+			protected function doubleClickHandler(event:MouseEvent):void
+			{
+				var layer:Layer = AppCommon.controller.selectedLayer;
+				if(layer != null && LayerUtil.isBaseButton())
+				{
+					layer.setStyle("skinName", data.name);
+					AppCommon.style.update();
+				}
+			}
+			
+			
+			protected function rollOverHandler(event:MouseEvent):void
+			{
+				nameText.setStyle("fontSize", 14);
+				nameText.setStyle("fontWeight", "bold");
+				AppCommon.skin.preview.show(data.name, data.skins);
+			}
+			
+			protected function rollOutHandler(event:MouseEvent):void
+			{
+				nameText.setStyle("fontSize", 12);
+				nameText.setStyle("fontWeight", "normal");
+				AppCommon.skin.preview.hide();
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:Label id="nameText" x="8" y="1" width="100%" height="100%" verticalAlign="middle"/>
+	
+</s:ItemRenderer>

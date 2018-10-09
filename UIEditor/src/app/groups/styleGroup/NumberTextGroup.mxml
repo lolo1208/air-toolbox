@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:c="app.components.*"
+		 fontFamily="微软雅黑"
+		 width="100%" height="40"
+		 creationComplete="creationCompleteHandler(event)"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			import app.layers.Layer;
+			
+			import lolo.utils.StringUtil;
+			
+			import mx.events.ColorPickerEvent;
+			import mx.events.FlexEvent;
+			
+			
+			
+			/**
+			 * NumberText 相关的样式
+			 */
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				
+			}
+			
+			
+			/**
+			 * 更新显示内容
+			 */
+			public function update():void
+			{
+				upColorP.selectedColor = uint(selectedLayer.style.upColor);
+				downColorP.selectedColor = uint(selectedLayer.style.downColor);
+			}
+			
+			
+			
+			
+			
+			/**
+			 * upColor
+			 */
+			protected function upColorP_changeHandler(event:ColorPickerEvent):void
+			{
+				selectedLayer.setStyle("upColor", StringUtil.getColorString(upColorP.selectedColor));
+			}
+			
+			
+			/**
+			 * downColor
+			 */
+			protected function downColorP_changeHandler(event:ColorPickerEvent):void
+			{
+				selectedLayer.setStyle("downColor", StringUtil.getColorString(downColorP.selectedColor));
+			}
+			
+			
+			
+			
+			/**
+			 * 当前选中的图层
+			 */
+			private function get selectedLayer():Layer { return AppCommon.controller.selectedLayer; }
+		]]>
+	</fx:Script>
+	
+	
+	<fx:Declarations>
+	</fx:Declarations>
+	
+	
+	<s:Label x="0" y="8" width="80" height="25" text="upColor：" textAlign="right" verticalAlign="middle"
+			 toolTip="值增加时，切换的颜色" />
+	<mx:ColorPicker id="upColorP" x="80" y="8" width="25" height="25" toolTip="值增加时，切换的颜色"
+					change="upColorP_changeHandler(event)"/>
+	<s:Label x="135" y="8" width="80" height="25" text="downColor：" textAlign="right" verticalAlign="middle"
+			 toolTip="值减少时，切换的颜色" />
+	<mx:ColorPicker id="downColorP" x="215" y="8" width="25" height="25" toolTip="值减少时，切换的颜色"
+					change="downColorP_changeHandler(event)"/>
+	
+	
+</s:Group>

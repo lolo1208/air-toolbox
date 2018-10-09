@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:c="app.components.*"
+		 fontFamily="微软雅黑" gap="-1"
+		 width="100%" height="100%"
+		 creationComplete="creationCompleteHandler(event)"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			import app.layers.BaseButtonLayer;
+			import app.layers.Layer;
+			import app.layers.PageListLayer;
+			import app.layers.ScrollListLayer;
+			import app.utils.LayerUtil;
+			
+			import mx.collections.ArrayList;
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			
+			import spark.events.IndexChangeEvent;
+			
+			
+			/**
+			 * 值为其他组件的属性
+			 */
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				
+			}
+			
+			
+			
+			/**
+			 * 更新显示内容
+			 */
+			public function update():void
+			{
+				this.removeAllElements();
+				var i:int, layer:Layer;
+				var curContainer:Sprite = AppCommon.controller.currentContainer;
+				
+				
+				// group
+				if(LayerUtil.isBaseButton())
+				{
+					groupDDL.dataProvider = new ArrayList([{name:""}]);
+					groupDDL.selectedIndex = 0;
+					for(i = 0; i < curContainer.numChildren; i++)
+					{
+						layer = curContainer.getChildAt(i) as Layer;
+						if(LayerUtil.isItemGroup(layer) && layer.id != "")
+						{
+							groupDDL.dataProvider.addItem({ name:layer.id, layer:layer });
+							
+							if((selectedLayer as BaseButtonLayer).groupLayer == layer)
+								groupDDL.selectedIndex = groupDDL.dataProvider.length - 1;
+						}
+					}
+					addElement(groupG);
+				}
+				
+				
+				// scrollBar
+				if(LayerUtil.isScrollList())
+				{
+					scrollBarDDL.dataProvider = new ArrayList([{ name:"", layer:null }]);
+					scrollBarDDL.selectedIndex = 0;
+					for(i = 0; i < curContainer.numChildren; i++)
+					{
+						layer = curContainer.getChildAt(i) as Layer;
+						if(LayerUtil.isScrollBar(layer) && layer.id != "")
+						{
+							scrollBarDDL.dataProvider.addItem({ name:layer.id, layer:layer });
+							if((selectedLayer as ScrollListLayer).scrollBarLayer == layer)
+								scrollBarDDL.selectedIndex = scrollBarDDL.dataProvider.length - 1;
+						}
+					}
+					addElement(scrollBarG);
+				}
+				
+				
+				// page
+				if(LayerUtil.isPageList())
+				{
+					pageDDL.dataProvider = new ArrayList([{ name:"", layer:null }]);
+					pageDDL.selectedIndex = 0;
+					for(i = 0; i < curContainer.numChildren; i++) {
+						layer = curContainer.getChildAt(i) as Layer;
+						if(LayerUtil.isPage(layer) && layer.id != "") {
+							pageDDL.dataProvider.addItem({ name:layer.id, layer:layer });
+							if((selectedLayer as PageListLayer).pageLayer == layer)
+								pageDDL.selectedIndex = pageDDL.dataProvider.length - 1;
+						}
+					}
+					addElement(pageG);
+				}
+				
+				
+				// parent
+				parentDDL.dataProvider = new ArrayList([{name:""}]);
+				parentDDL.selectedIndex = 0;
+				
+				var curC:Sprite = LayerUtil.isContainer()
+					? AppCommon.canvas.containerTB.dataProvider.getItemAt(0).container.element
+					: curContainer;
+				for(i = 0; i < curC.numChildren; i++)
+				{
+					layer = curC.getChildAt(i) as Layer;
+					if(layer != selectedLayer && LayerUtil.isSprite(layer) && layer.id != "")
+					{
+						parentDDL.dataProvider.addItem({ name:layer.id, layer:layer });
+						
+						if(selectedLayer.parentLayer == layer)
+							parentDDL.selectedIndex = parentDDL.dataProvider.length - 1;
+					}
+				}
+				this.addElement(parentG);
+				
+				
+				updateHeight();
+			}
+			
+			
+			/**
+			 * 更新该容器的高度
+			 */
+			private function updateHeight():void
+			{
+				this.height = this.numElements * 40;
+			}
+			
+			
+			
+			/**
+			 * parent
+			 */
+			protected function parentDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				if(parentDDL.selectedIndex == 0) {
+					selectedLayer.parentLayer = null;
+					return;
+				}
+				
+				var lastIndex:uint = parentDDL.selectedIndex;
+				var layerList:Vector.<Layer> = new Vector.<Layer>();
+				layerList.push(selectedLayer);
+				var layer:Layer = parentDDL.selectedItem.layer;
+				while(layer != null) {
+					for(var i:int = 0; i < layerList.length; i++) {
+						if(layer == layerList[i]) {
+							Alert.show("元件的 parent 不能相互设置！", "提示");
+							parentDDL.selectedIndex = lastIndex;
+							return;
+						}
+					}
+					layerList.push(layer);
+					layer = layer.parentLayer;
+				}
+				
+				selectedLayer.parentLayer = parentDDL.selectedItem.layer;
+			}
+			
+			
+			/**
+			 * group
+			 */
+			protected function groupDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				(selectedLayer as BaseButtonLayer).groupLayer = (groupDDL.selectedIndex == 0)
+					? null : groupDDL.selectedItem.layer;
+			}
+			
+			
+			/**
+			 * page
+			 */
+			protected function pageDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				(selectedLayer as PageListLayer).pageLayer = pageDDL.selectedItem.layer;
+			}
+			
+			
+			/**
+			 * scrollBar
+			 */
+			protected function scrollBarDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				selectedLayer["scrollBarLayer"] = scrollBarDDL.selectedItem.layer;
+			}
+			
+			
+			
+			
+			/**
+			 * 当前选中的图层
+			 */
+			private function get selectedLayer():Layer { return AppCommon.controller.selectedLayer; }
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+	</fx:Declarations>
+	
+	
+	
+	<s:Group id="parentG" width="100%" height="40">
+		<s:Label y="8" width="80" height="25" text="parent：" textAlign="right" verticalAlign="middle"
+				 toolTip="指定父容器（父容器只能是Sprite对象，需注意控件的生成顺序）" />
+		<s:DropDownList id="parentDDL" x="80" y="8" width="160" height="25" labelField="name"
+						change="parentDDL_changeHandler(event)" />
+	</s:Group>
+	
+	
+	<s:Group id="groupG" width="100%" height="40">
+		<s:Label y="8" width="80" height="25" text="group：" textAlign="right" verticalAlign="middle"
+				 toolTip="所属的组（需注意控件的生成顺序）" />
+		<s:DropDownList id="groupDDL" x="80" y="8" width="160" height="25" labelField="name"
+						change="groupDDL_changeHandler(event)"/>
+	</s:Group>
+	
+	
+	<s:Group id="pageG" width="100%" height="40">
+		<s:Label x="0" y="8" width="80" height="25" text="page：" textAlign="right" verticalAlign="middle"
+				 toolTip="对应的Page组件（需注意控件的生成顺序）" />
+		<s:DropDownList id="pageDDL" x="80" y="8" width="160" height="25" labelField="name"
+						change="pageDDL_changeHandler(event)" />
+	</s:Group>
+	
+	
+	<s:Group id="scrollBarG" width="100%" height="40">
+		<s:Label x="0" y="8" width="80" height="25" text="scrollBar：" textAlign="right" verticalAlign="middle"
+				 toolTip="对应的ScrollBar组件（记得相应的去修改scrollBar.target。需注意控件的生成顺序，列表应该比滚动条先创建）" />
+		<s:DropDownList id="scrollBarDDL" x="80" y="8" width="160" height="25" labelField="name"
+						change="scrollBarDDL_changeHandler(event)" />
+	</s:Group>
+	
+</s:VGroup>

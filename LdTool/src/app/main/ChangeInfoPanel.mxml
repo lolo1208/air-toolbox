@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 title="　 修改属性"
+		 width="420" height="200"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			import app.common.ImageAssets;
+			
+			import mx.controls.Alert;
+			import mx.managers.PopUpManager;
+			
+			import toolbox.Toolbox;
+			
+			private var _item:Object;
+			
+			
+			
+			
+			public function show(item:Object):void
+			{
+				if(!this.parent) {
+					this.x = Toolbox.app.stage.stageWidth - width >> 1;
+					this.y = Toolbox.app.stage.stageHeight - height >> 1;
+					PopUpManager.addPopUp(this, Toolbox.app, true);
+				}
+				
+				typeIcon.source = AppCommon.isUI ? ImageAssets.UI : ImageAssets.Animation;
+				fpsNs.enabled = !AppCommon.isUI;
+				
+				if(AppCommon.isUI) {
+					typeIcon.source = ImageAssets.UI;
+					fpsNs.enabled = false;
+					fpsNs.value = 60;
+				}
+				else {
+					typeIcon.source = ImageAssets.Animation;
+					fpsNs.enabled = true;
+					fpsNs.value = item.info.fps;
+				}
+				
+				_item = item;
+				snText.text = item.name;
+			}
+			
+			
+			protected function submtBtn_clickHandler(event:MouseEvent):void
+			{
+				submt();
+			}
+			
+			public function submt():void
+			{
+				if(isNaN(fpsNs.value)) {
+					Alert.show("请填写正确的 FPS 值！");
+					return;
+				}
+				closeBtn_clickHandler();
+				
+				_item.name = snText.text;
+				if(!AppCommon.isUI) _item.info.fps = fpsNs.value;
+				
+				AppCommon.app.exportGroup.listData.itemUpdated(_item);
+			}
+			
+			
+			
+			
+			protected function closeBtn_clickHandler(event:MouseEvent=null):void
+			{
+				if(this.parent) PopUpManager.removePopUp(this);
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<s:Image id="typeIcon" x="5" y="-24"/>
+	
+	
+	<s:Label x="20" y="25" width="100" height="25" text="sourceName：" textAlign="right"
+			 verticalAlign="middle"/>
+	<s:TextInput id="snText" x="125" y="25" width="260" height="25" restrict="a-zA-Z0-9._\-"/>
+	
+	
+	<s:Label x="20" y="65" width="100" height="25" text="FPS：" textAlign="right"
+			 verticalAlign="middle"/>
+	<s:NumericStepper id="fpsNs" x="125" y="65" width="65" height="25" maximum="60" minimum="1"/>
+	
+	
+	<s:Button id="submtBtn" x="125" y="110" width="65" height="30"
+			  label="确定" fontSize="14"
+			  click="submtBtn_clickHandler(event)"
+			  />
+	
+	<s:Button id="closeBtn" x="393" y="-26" width="20" height="20"
+			  icon="{ImageAssets.Close}"
+			  click="closeBtn_clickHandler(event)"
+			  />
+	
+</s:Panel>

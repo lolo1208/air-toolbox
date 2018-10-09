@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<canvasGroup:CanvasGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+						 xmlns:s="library://ns.adobe.com/flex/spark" 
+						 xmlns:mx="library://ns.adobe.com/flex/mx"
+						 xmlns:canvasGroup="app.canvasGroup.*"
+						 xmlns:controls="toolbox.controls.*"
+						 width="300" height="370" fontFamily="微软雅黑"
+						 creationComplete="creationCompleteHandler(event)"
+						 addedToStage="addedToStageHandler(event)"
+						 resize="resizeHandler(event)"
+						 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.ImageAssets;
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<s:Label id="pathText" x="20" y="20" color="#666666" mouseChildren="false" mouseEnabled="false"/>
+	
+	<s:Button id="focusBtn" x="260" y="20" width="25" height="25" alpha="0.5"
+			  icon="{ImageAssets.Focus}" toolTip="动画跑哪儿去了？"
+			  mouseOver="alpha_mouseEventHandler(event)" mouseOut="alpha_mouseEventHandler(event)"
+			  click="focusBtn_clickHandler(event)" />
+	
+	<s:HGroup id="positionGroup" x="10" y="335" height="30" gap="0">
+		<s:Label height="23" text="时间轴：" verticalAlign="middle"/>
+		<controls:Timeline id="timeline" width="50" height="20" />
+		
+		<s:Label width="15" />
+		<s:Label height="25" text="fps：" verticalAlign="middle" />
+		<s:TextInput id="fpsText" width="30" height="22" text="0"
+					 change="fpsText_changeHandler(event)" />
+		
+		<s:Label width="15" />
+		<s:Label height="25" text="x：" verticalAlign="middle" />
+		<s:TextInput id="xText" width="35" height="22" text="0"
+					 change="positionText_changeHandler(event)" />
+		
+		<s:Label width="5" />
+		<s:Label height="25" text="y：" verticalAlign="middle"/>
+		<s:TextInput id="yText" width="35" height="22"  text="0"
+					 change="positionText_changeHandler(event)"/>
+		
+		<s:Label width="10" />
+		<s:Button id="allBtn" width="22" height="22"
+				  icon="{ImageAssets.All}" toolTip="将注册点位置应用到所有动画"
+				  click="allBtn_clickHandler(event)" />
+	</s:HGroup>
+	
+	<s:CheckBox id="colorCB" x="172" y="24" alpha="0.5" toolTip="显示或关闭纯色背景"
+				mouseOver="alpha_mouseEventHandler(event)" mouseOut="alpha_mouseEventHandler(event)"
+				click="colorBG_eventHandler(event)" />
+	<mx:ColorPicker id="colorCP" x="190" y="20" width="25" height="25" alpha="0.5"
+					enabled="false" selectedColor="#999999"
+					mouseOver="alpha_mouseEventHandler(event)" mouseOut="alpha_mouseEventHandler(event)"
+					change="colorBG_eventHandler(event)" />
+	
+</canvasGroup:CanvasGroup>

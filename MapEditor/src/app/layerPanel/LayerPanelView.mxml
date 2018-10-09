@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layerPanel:LayerPanel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   xmlns:layerPanel="app.layerPanel.*"
+					   title="　  图层"
+					   width="230" height="300"
+					   creationComplete="creationCompleteHandler(event)"
+					   >
+	<fx:Script>
+		<![CDATA[
+			import app.common.ImageAssets;
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	
+	<s:Image x="5" y="-25" source="{ImageAssets.Layer}" />
+	
+	
+	<mx:Accordion id="contentA" width="100%" height="100%" borderVisible="false" selectedIndex="1">
+		
+		<s:NavigatorContent width="100%" height="100%" label="遮挡物">
+			<s:List id="coverList" x="0" y="0" width="100%" height="100%" borderVisible="false" requireSelection="true"
+					dropEnabled="true" dragEnabled="true" dragMoveEnabled="true"
+					dragComplete="dragCompleteHandler(event)"
+					itemRenderer="app.layerPanel.LayerItemRenderer"
+					/>
+		</s:NavigatorContent>
+		
+		<s:NavigatorContent width="100%" height="100%" label="背景">
+			<s:List id="bgList" x="0" y="0" width="100%" height="100%" borderVisible="false" requireSelection="true"
+					dropEnabled="true" dragEnabled="true" dragMoveEnabled="true"
+					dragComplete="dragCompleteHandler(event)"
+					itemRenderer="app.layerPanel.LayerItemRenderer"
+					/>
+		</s:NavigatorContent>
+		
+	</mx:Accordion>
+	
+	
+	<layerPanel:controlBarContent>
+		
+		<s:Label width="158" height="16" />
+		
+		<s:Button id="addBtn" width="16" height="16"
+				  icon="{ImageAssets.Add}" mouseFocusEnabled="false"
+				  click="addBtn_clickHandler(event)"
+				  />
+		
+		<s:Button id="removeBtn" width="16" height="16"
+				  icon="{ImageAssets.Remove}" mouseFocusEnabled="false"
+				  click="removeBtn_clickHandler(event)"
+				  />
+		
+	</layerPanel:controlBarContent>
+	
+	
+</layerPanel:LayerPanel>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:c="app.components.*"
+		 fontFamily="微软雅黑"
+		 width="100%" height="160"
+		 creationComplete="creationCompleteHandler(event)"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			import app.layers.ArtTextLayer;
+			
+			import lolo.components.ArtText;
+			import lolo.core.Constants;
+			
+			import mx.collections.ArrayList;
+			import mx.events.FlexEvent;
+			
+			import spark.events.IndexChangeEvent;
+			import spark.events.TextOperationEvent;
+			
+			
+			/**
+			 * ArtText 属性
+			 */
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				alignDDL.dataProvider = new ArrayList([ Constants.ALIGN_LEFT, Constants.ALIGN_CENTER, Constants.ALIGN_RIGHT ]);
+				valignDDL.dataProvider = new ArrayList([ Constants.VALIGN_TOP, Constants.VALIGN_MIDDLE, Constants.VALIGN_BOTTOM ]);
+			}
+			
+			
+			/**
+			 * 更新显示内容
+			 */
+			public function update():void
+			{
+				prefixText.text = artText.prefix;
+				textText.text = artText.text;
+				spacingNS.value = artText.spacing;
+				alignDDL.selectedItem = artText.align;
+				valignDDL.selectedItem = artText.valign;
+			}
+			
+			
+			
+			
+			/**
+			 * prefix
+			 */
+			protected function prefixText_changeHandler(event:TextOperationEvent):void
+			{
+				selectedLayer.show(prefixText.text);
+			}
+			
+			
+			/**
+			 * text
+			 */
+			protected function textText_changeHandler(event:TextOperationEvent):void
+			{
+				selectedLayer.show(null, textText.text);
+			}
+			
+			
+			/**
+			 * spacing
+			 */
+			protected function spacing_changeHandler(event:Event):void
+			{
+				artText.spacing = spacingHS.value;
+				artText.updateNow();
+				AppCommon.controller.updateFrame();
+			}
+			
+			
+			/**
+			 * align
+			 */
+			protected function alignDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				artText.align = alignDDL.selectedItem;
+				artText.updateNow();
+				AppCommon.controller.updateFrame();
+			}
+			
+			/**
+			 * valign
+			 */
+			protected function valignDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				artText.valign = valignDDL.selectedItem;
+				artText.updateNow();
+				AppCommon.controller.updateFrame();
+			}
+			
+			
+			
+			
+			/**
+			 * 当前选中的图层
+			 */
+			private function get selectedLayer():ArtTextLayer
+			{
+				return AppCommon.controller.selectedLayer as ArtTextLayer;
+			}
+			
+			private function get artText():ArtText { return selectedLayer.element as ArtText; }
+		]]>
+	</fx:Script>
+	
+	
+	
+	<s:Label y="8" width="80" height="25" textAlign="right" verticalAlign="middle"
+			 text="prefix：" toolTip="字符 BitmapSprite.sourceName 的前缀"/>
+	<c:PTextInput id="prefixText" x="80" y="8" width="160" height="25" restrict="a-zA-z0-9._\-"
+				  change="prefixText_changeHandler(event)" />
+	
+	
+	<s:Label y="48" width="80" height="25" textAlign="right" verticalAlign="middle"
+			 text="text：" toolTip="文本内容"/>
+	<c:PTextInput id="textText" x="80" y="48" width="160" height="25" restrict="^ 　"
+				  change="textText_changeHandler(event)" />
+	
+	
+	<s:Label y="88" width="80" height="25" textAlign="right" verticalAlign="middle"
+			 text="spacing：" toolTip="字符间距" />
+	<s:NumericStepper id="spacingNS" x="80" y="88" width="50" height="25"
+					  minimum="-100" maximum="100" stepSize="1" value="{spacingHS.value}"
+					  change="spacing_changeHandler(event)" />
+	<s:HSlider id="spacingHS" x="140" y="96" width="55"
+			   minimum="-100" maximum="100" stepSize="1" value="{spacingNS.value}"
+			   change="spacing_changeHandler(event)" />
+	
+	
+	<s:Label y="128" width="80" height="25" textAlign="right" verticalAlign="middle"
+			 text="alignment：" toolTip="选择对齐方式" />
+	<s:DropDownList id="alignDDL" x="80" y="128" width="75" height="25" toolTip="水平"
+					change="alignDDL_changeHandler(event)"/>
+	<s:DropDownList id="valignDDL" x="165" y="128" width="75" height="25" toolTip="垂直"
+					change="valignDDL_changeHandler(event)"/>
+</s:Group>

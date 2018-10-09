@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009"
+		  xmlns:s="library://ns.adobe.com/flex/spark"
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  xmlns:c="app.components.*"
+		  gap="-1" fontFamily="微软雅黑"
+		  width="100%" height="100%"
+		  creationComplete="creationCompleteHandler(event)"
+		  >
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			import app.layers.ItemGroupLayer;
+			import app.layers.Layer;
+			import app.utils.LayerUtil;
+			
+			import lolo.core.Constants;
+			import lolo.utils.StringUtil;
+			
+			import mx.collections.ArrayList;
+			import mx.events.ColorPickerEvent;
+			import mx.events.FlexEvent;
+			
+			import spark.events.IndexChangeEvent;
+			import spark.events.TextOperationEvent;
+			
+			
+			
+			/**
+			 * 有时候显示的公共属性
+			 */
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				selectedDDL.dataProvider = new ArrayList([ "true", "false" ]);
+				enabledDDL.dataProvider = new ArrayList([ "true", "false" ]);
+				layoutDDL.dataProvider = new ArrayList([ Constants.ABSOLUTE, Constants.HORIZONTAL, Constants.VERTICAL ]);
+			}
+			
+			
+			
+			/**
+			 * 更新显示内容
+			 */
+			public function update():void
+			{
+				this.removeAllElements();
+				
+				scaleXText.text = selectedLayer.scaleX.toString();
+				scaleYText.text = selectedLayer.scaleY.toString();
+				
+				
+				if(LayerUtil.isBaseButton()
+					|| LayerUtil.isPage()
+					|| LayerUtil.isItemGroup()
+					|| LayerUtil.isPage()
+					|| LayerUtil.isScrollBar())
+				{
+					enabledDDL.selectedItem = selectedLayer["enabled"].toString();
+					this.addElement(enabledG);
+				}
+				
+				
+				if(LayerUtil.isBaseButton())
+				{
+					selectedDDL.selectedItem = selectedLayer["selected"].toString();
+					this.addElement(selectedG);
+				}
+				
+				
+				if(LayerUtil.isAnimation() || LayerUtil.isBtimapSprite())
+				{
+					sourceNameText.text = selectedLayer.element["sourceName"];
+					addElement(sourceNameG);
+				}
+				
+				
+				if(LayerUtil.isItemGroup())
+				{
+					layoutDDL.selectedItem = selectedLayer["layout"];
+					addElement(layoutG);
+				}
+				
+				
+				if(LayerUtil.isItemGroup() || LayerUtil.isList())
+				{
+					hGapText.text = selectedLayer["horizontalGap"].toString();
+					vGapText.text = selectedLayer["verticalGap"].toString();
+					if(hGapText.text == "0") hGapText.text = "";
+					if(vGapText.text == "0") vGapText.text = "";
+					addElement(gapG);
+				}
+				
+				
+				if(LayerUtil.isModalBackground())
+				{
+					alphaNS.value = selectedLayer.alpha;
+					addElement(alphaG);
+					colorP.selectedColor = selectedLayer["color"];
+					colorP_changeHandler();
+					addElement(colorG);
+				}
+				
+				
+				updateHeight();
+			}
+			
+			
+			/**
+			 * 更新该容器的高度
+			 */
+			public function updateHeight():void
+			{
+				this.height = this.numElements * 40;
+			}
+			
+			
+			
+			/**
+			 * alpha
+			 */
+			protected function alpha_changeHandler(event:Event):void
+			{
+				selectedLayer.alpha = alphaHS.value;
+			}
+			
+			
+			/**
+			 * scaleX、scaleY
+			 */
+			protected function scaleText_changeHandler(event:TextOperationEvent):void
+			{
+				selectedLayer.scaleX = Number(scaleXText.text);
+				selectedLayer.scaleY = Number(scaleYText.text);
+				AppCommon.prop.updateBounds();
+			}
+			
+			
+			/**
+			 * gap
+			 */
+			protected function gapText_changeHandler(event:TextOperationEvent):void
+			{
+				selectedLayer["horizontalGap"] = int(hGapText.text);
+				selectedLayer["verticalGap"] = int(vGapText.text);
+			}
+			
+			
+			/**
+			 * layout
+			 */
+			protected function layoutDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				(selectedLayer as ItemGroupLayer).layout = layoutDDL.selectedItem;
+			}
+			
+			
+			/**
+			 * color
+			 */
+			protected function colorP_changeHandler(event:ColorPickerEvent=null):void
+			{
+				selectedLayer["color"] = colorP.selectedColor;
+				colorText.text = StringUtil.getColorString(colorP.selectedColor, "");
+			}
+			protected function colorText_changeHandler(event:TextOperationEvent):void
+			{
+				colorP.selectedColor = uint("0x" + colorText.text);
+				selectedLayer["color"] = colorP.selectedColor;
+			}
+			
+			
+			/**
+			 * selected
+			 */
+			protected function selectedDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				selectedLayer["selected"] = selectedDDL.selectedItem == "true";
+			}
+			
+			/**
+			 * 更新 selected-DropDownList（group有改变时，会使用group.selected）
+			 */
+			public function updateSelected():void
+			{
+				if(!LayerUtil.isBaseButton()) return;
+				selectedDDL.selectedItem = selectedLayer["selected"].toString();
+			}
+			
+			
+			/**
+			 * enabled
+			 */
+			protected function enabledDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				selectedLayer["enabled"] = enabledDDL.selectedItem == "true";
+			}
+			
+			
+			
+			/**
+			 * 当前选中的图层
+			 */
+			private function get selectedLayer():Layer { return AppCommon.controller.selectedLayer; }
+		]]>
+	</fx:Script>
+	
+	
+	<fx:Declarations>
+	</fx:Declarations>
+	
+	
+	<s:Group id="scaleG" width="100%" height="40">
+		<s:Label y="8" width="80" height="25" text="scaleX：" textAlign="right" verticalAlign="middle"/>
+		<c:PTextInput id="scaleXText" x="80" y="8" width="50" height="25" restrict="0-9."
+					  change="scaleText_changeHandler(event)"/>
+		<s:Label x="130" y="8" width="60" height="25" text="scaleY：" textAlign="right" verticalAlign="middle"/>
+		<c:PTextInput id="scaleYText" x="190" y="8" width="50" height="25" restrict="0-9."
+					  change="scaleText_changeHandler(event)"/>
+	</s:Group>
+	
+	
+	<s:Group id="sourceNameG" width="100%" height="40">
+		<s:Label x="-5" y="9" width="85" height="25" fontSize="11" text="sourceName："
+				 textAlign="right" verticalAlign="middle"/>
+		<c:PTextInput id="sourceNameText" x="80" y="8" width="160" height="25" color="#666666"
+					  editable="false" fontFamily="宋体"/>
+	</s:Group>
+	
+	
+	<s:Group id="alphaG" width="100%" height="40">
+		<s:Label y="8" width="80" height="25" text="alpha：" textAlign="right" verticalAlign="middle"/>
+		<s:NumericStepper id="alphaNS" x="80" y="8" width="50" height="25" maximum="1"
+						  minimum="0" stepSize="0.01" value="{alphaHS.value}"
+						  change="alpha_changeHandler(event)" />
+		<s:HSlider id="alphaHS" x="140" y="16" width="55" maximum="1" minimum="0"
+				   stepSize="0.01" value="{alphaNS.value}"
+				   change="alpha_changeHandler(event)" />
+	</s:Group>
+	
+	
+	<s:Group id="gapG" width="100%" height="40">
+		<s:Label y="8" width="80" height="25" textAlign="right" verticalAlign="middle"
+				 text="gap：" toolTip="水平或垂直方向子项间的像素间隔" />
+		<c:PTextInput id="hGapText" x="80" y="8" width="75" height="25" restrict="0-9\-" maxChars="5"
+					  change="gapText_changeHandler(event)" prompt="horizontal" toolTip="horizontal" />
+		<c:PTextInput id="vGapText" x="165" y="8" width="75" height="25" restrict="0-9\-" maxChars="5"
+					  change="gapText_changeHandler(event)" prompt="vertical" toolTip="vertical" />
+	</s:Group>
+	
+	
+	<s:Group id="layoutG" width="100%" height="40">
+		<s:Label y="8" width="80" height="25" textAlign="right" verticalAlign="middle"
+				 text="layout：" toolTip="布局方式"/>
+		<s:DropDownList id="layoutDDL" x="80" y="8" width="160" height="25" labelField="name"
+						change="layoutDDL_changeHandler(event)"
+						/>
+	</s:Group>
+	
+	
+	<s:Group id="colorG" width="100%" height="40">
+		<s:Label y="8" width="80" height="25" text="color：" textAlign="right" verticalAlign="middle"/>
+		<c:PTextInput id="colorText" x="80" y="8" width="60" height="25" restrict="a-fA-F0-9" maxChars="6"
+					  change="colorText_changeHandler(event)" />
+		<mx:ColorPicker id="colorP" x="145" y="8" width="25" height="25"
+						change="colorP_changeHandler(event)"/>
+	</s:Group>
+	
+	
+	<s:Group id="selectedG" width="100%" height="40">
+		<s:Label y="8" width="80" height="25" text="selected：" textAlign="right" verticalAlign="middle"/>
+		<s:DropDownList id="selectedDDL" x="80" y="8" width="90" height="25" change="selectedDDL_changeHandler(event)"/>
+	</s:Group>
+	
+	
+	<s:Group id="enabledG" width="100%" height="40">
+		<s:Label y="8" width="80" height="25" text="enabled：" textAlign="right" verticalAlign="middle"/>
+		<s:DropDownList id="enabledDDL" x="80" y="8" width="90" height="25" change="enabledDDL_changeHandler(event)"/>
+	</s:Group>
+	
+</s:VGroup>

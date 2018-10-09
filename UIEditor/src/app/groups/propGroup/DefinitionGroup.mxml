@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:validators="app.validators.*"
+		 xmlns:c="app.components.*"
+		 width="100%" height="80" creationComplete="creationCompleteHandler(event)"
+		 fontFamily="微软雅黑">
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			import app.common.ImageAssets;
+			import app.layers.DisplayObjectLayer;
+			
+			import lolo.components.AlertText;
+			import lolo.core.Common;
+			import lolo.utils.StringUtil;
+			
+			import mx.collections.ArrayList;
+			import mx.events.FlexEvent;
+			
+			import spark.events.IndexChangeEvent;
+			
+			import toolbox.Toolbox;
+			
+			
+			private var _file:File;
+			private var _loader:Loader;
+			
+			
+			
+			/**
+			 * 选择 DisplayObject 的 swf 和 definition
+			 */
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				_file = new File();
+				_file.addEventListener(Event.SELECT, file_eventHandler);
+				_file.addEventListener(Event.COMPLETE, file_eventHandler);
+				
+				_loader = new Loader();
+				_loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loader_completeHandler);
+			}
+			
+			
+			
+			
+			/**
+			 * 更新显示内容
+			 */
+			public function update():void
+			{
+				swfText.text = selectedLayer.swf;
+				definitionCB.textInput.text = selectedLayer.definition;
+				refreshDomain();
+			}
+			
+			
+			
+			/**
+			 * 更新显示 SWF Domain 的 Libarray Class 列表
+			 */
+			private function refreshDomain():void
+			{
+				if(selectedLayer.domain == null) {
+					definitionCB.dataProvider = new ArrayList();
+					return;
+				}
+				var vec:Vector.<String> = selectedLayer.domain.getQualifiedDefinitionNames();
+				var arr:Array = [];
+				for(var i:int=0; i<vec.length; i++) arr.push(vec[i].replace("::", "."));
+				definitionCB.dataProvider = new ArrayList(arr);
+				definitionCB.selectedItem = definitionCB.textInput.text;
+			}
+			
+			
+			
+			
+			/**
+			 * 重新加载swf文件内容
+			 */
+			protected function refreshBtn_clickHandler(event:MouseEvent):void
+			{
+				_file.nativePath = Toolbox.resRootDir + swfText.text;
+				if(!_file.exists || _file.isDirectory) {
+					AlertText.show("SWF文件地址有误！", "failed").moveToStageMousePosition();
+					return;
+				}
+				_file.load();
+			}
+			
+			private function file_eventHandler(event:Event):void
+			{
+				if(event.type == Event.SELECT) {
+					var uri:String = StringUtil.backslashToSlash(_file.nativePath);
+					uri = uri.replace(Toolbox.resRootDir, "");
+					selectedLayer.swf = swfText.text = uri;
+					_file.load();
+				}
+				else {
+					selectedLayer.domain = new ApplicationDomain();
+					var loaderContext:LoaderContext = new LoaderContext();
+					loaderContext.allowLoadBytesCodeExecution = true;
+					loaderContext.applicationDomain = selectedLayer.domain;
+					_loader.loadBytes(_file.data, loaderContext);
+				}
+			}
+			
+			private function loader_completeHandler(event:Event):void
+			{
+				selectedLayer.definition = definitionCB.textInput.text;
+				refreshDomain();
+				_loader.unloadAndStop();
+			}
+			
+			
+			
+			/**
+			 * 双击swf文件地址文本框
+			 */
+			protected function swfText_doubleClickHandler(event:MouseEvent):void
+			{
+				_file.nativePath = Toolbox.resRootDir + swfText.text;
+				_file.browse([new FileFilter("SWF 文件", "*.swf")]);
+			}
+			
+			
+			/**
+			 * 修改 definition
+			 */
+			protected function definitionCB_changeHandler(event:IndexChangeEvent):void
+			{
+				Common.stage.addEventListener(Event.ENTER_FRAME, changeDefinition);
+			}
+			
+			private function changeDefinition(event:Event):void
+			{
+				Common.stage.removeEventListener(Event.ENTER_FRAME, changeDefinition);
+				selectedLayer.definition = definitionCB.textInput.text;
+			}
+			
+			protected function definitionCB_focusHandler(event:FocusEvent):void
+			{
+				AppCommon.keyboardUsing = event.type == FocusEvent.FOCUS_IN;
+			}
+			
+			
+			
+			
+			/**
+			 * 当前选中的图层
+			 */
+			private function get selectedLayer():DisplayObjectLayer
+			{
+				return AppCommon.controller.selectedLayer as DisplayObjectLayer;
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+	</fx:Declarations>
+	
+	<s:Label x="0" y="8" width="80" height="25" textAlign="right" verticalAlign="middle"
+			 text="swf：" toolTip="包含导出类的SWF" />
+	
+	<c:PTextInput id="swfText" x="80" y="8" width="130" height="25" color="#666666"
+				  editable="false" toolTip="双击浏览SWF文件"
+				  doubleClickEnabled="true" doubleClick="swfText_doubleClickHandler(event)"
+				  />
+	
+	<s:Button id="refreshBtn" x="215" y="8" width="25" height="25"
+			  icon="{ImageAssets.Refresh}" toolTip="重新加载该SWF文件"
+			  click="refreshBtn_clickHandler(event)"
+			  />
+	
+	
+	
+	<s:Label y="48" width="80" height="25" textAlign="right" verticalAlign="middle"
+			 text="definition：" toolTip="类的完整定义名称"
+			 />
+	<s:ComboBox id="definitionCB" x="80" y="48" width="160" height="25"
+				change="definitionCB_changeHandler(event)"
+				focusIn="definitionCB_focusHandler(event)"
+				focusOut="definitionCB_focusHandler(event)"/>
+</s:Group>

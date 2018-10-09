@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:c="app.components.*"
+		 fontFamily="微软雅黑"
+		 width="100%" height="130"
+		 creationComplete="creationCompleteHandler(event)"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			import app.layers.Layer;
+			import app.utils.LayerUtil;
+			
+			import lolo.utils.StringUtil;
+			
+			import mx.collections.ArrayList;
+			import mx.events.ColorPickerEvent;
+			import mx.events.FlexEvent;
+			
+			import spark.events.IndexChangeEvent;
+			import spark.events.TextOperationEvent;
+			
+			
+			
+			/**
+			 * 内容的内边距样式
+			 */
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				hAlignDDL.dataProvider = new ArrayList(["left", "center", "right"]);
+				vAlignDDL.dataProvider = new ArrayList(["top", "middle", "bottom"]);
+			}
+			
+			
+			/**
+			 * 更新显示内容
+			 */
+			public function update():void
+			{
+				var style:Object = selectedLayer.style;
+				
+				
+				if(LayerUtil.isButton())
+				{
+					lptText.text = String(int(style.labelPaddingTop));
+					lpbText.text = String(int(style.labelPaddingBottom));
+					lplText.text = String(int(style.labelPaddingLeft));
+					lprText.text = String(int(style.labelPaddingRight));
+					hAlignDDL.selectedItem = element.labelHorizontalAlign;
+					vAlignDDL.selectedItem = element.labelVerticalAlign;
+				}
+				else
+				{
+					lptText.text = String(int(style.imagePaddingTop));
+					lpbText.text = String(int(style.imagePaddingBottom));
+					lplText.text = String(int(style.imagePaddingLeft));
+					lprText.text = String(int(style.imagePaddingRight));
+					hAlignDDL.selectedItem = element.imageHorizontalAlign;
+					vAlignDDL.selectedItem = element.imageVerticalAlign;
+				}
+			}
+			
+			
+			
+			
+			/**
+			 * Padding
+			 */
+			protected function labelPaddingText_changeHandler(event:TextOperationEvent):void
+			{
+				if(LayerUtil.isButton()) {
+					selectedLayer.setStyle("labelPaddingTop", int(lptText.text));
+					selectedLayer.setStyle("labelPaddingBottom", int(lpbText.text));
+					selectedLayer.setStyle("labelPaddingLeft", int(lplText.text));
+					selectedLayer.setStyle("labelPaddingRight", int(lprText.text));
+				}
+				else {
+					selectedLayer.setStyle("imagePaddingTop", int(lptText.text));
+					selectedLayer.setStyle("imagePaddingBottom", int(lpbText.text));
+					selectedLayer.setStyle("imagePaddingLeft", int(lplText.text));
+					selectedLayer.setStyle("imagePaddingRight", int(lprText.text));
+				}
+			}
+			
+			
+			/**
+			 * Horizontal Align
+			 */
+			protected function hAlignDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				if(LayerUtil.isButton()) {
+					selectedLayer.setStyle("labelHorizontalAlign", hAlignDDL.selectedItem);
+				}
+				else {
+					selectedLayer.setStyle("imageHorizontalAlign", hAlignDDL.selectedItem);
+				}
+			}
+			
+			
+			/**
+			 * Vertical Align
+			 */
+			protected function vAlignDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				if(LayerUtil.isButton()) {
+					selectedLayer.setStyle("labelVerticalAlign", vAlignDDL.selectedItem);
+				}
+				else {
+					selectedLayer.setStyle("imageVerticalAlign", vAlignDDL.selectedItem);
+				}
+			}
+			
+			
+			
+			
+			/**
+			 * 当前选中的图层
+			 */
+			private function get selectedLayer():Layer { return AppCommon.controller.selectedLayer; }
+			
+			private function get element():* { return selectedLayer.element; }
+		]]>
+	</fx:Script>
+	
+	
+	<fx:Declarations>
+	</fx:Declarations>
+	
+	
+	<s:Rect x="1" width="100%" height="1"><s:fill><s:SolidColor color="#CCCCCC"/></s:fill></s:Rect>
+	
+	
+	<s:Label x="10" y="10" text="padding：" toolTip="内容的内边距" />
+	<c:PTextInput id="lptText" x="45" y="30" width="45" height="22" restrict="0-9" toolTip="top"
+				  change="labelPaddingText_changeHandler(event)" />
+	<c:PTextInput id="lpbText" x="95" y="30" width="45" height="22" restrict="0-9" toolTip="bottom"
+				  change="labelPaddingText_changeHandler(event)" />
+	<c:PTextInput id="lplText" x="145" y="30" width="45" height="22" restrict="0-9" toolTip="left"
+				  change="labelPaddingText_changeHandler(event)" />
+	<c:PTextInput id="lprText" x="195" y="30" width="45" height="22" restrict="0-9" toolTip="right"
+				  change="labelPaddingText_changeHandler(event)" />
+	
+	<s:Label x="0" y="60" width="150" height="25" text="horizontalAlign："
+			 textAlign="right" toolTip="内容的水平对齐方式" verticalAlign="middle"/>
+	<s:DropDownList id="hAlignDDL" x="150" y="60" width="90" height="25" change="hAlignDDL_changeHandler(event)"/>
+	
+	<s:Label x="0" y="95" width="150" height="25" text="verticalAlign："
+			 textAlign="right" toolTip="内容的垂直对齐方式" verticalAlign="middle"/>
+	<s:DropDownList id="vAlignDDL" x="150" y="95" width="90" height="25" change="vAlignDDL_changeHandler(event)"/>
+	
+	
+</s:Group>

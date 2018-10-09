@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<canvas:CreateContainerPanel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+						 xmlns:s="library://ns.adobe.com/flex/spark" 
+						 xmlns:mx="library://ns.adobe.com/flex/mx"
+						 xmlns:canvas="app.groups.canvasGroup.*"
+						 xmlns:controls="app.controls.*"
+						 xmlns:c="app.components.*"
+						 width="300" height="180" title="创建容器"
+						 creationComplete="creationCompleteHandler(event)"
+						 addedToStage="addedToStageHandler(event)"
+						 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.ImageAssets;
+		]]>
+	</fx:Script>
+	
+	
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	
+	<s:Label id="imgText" x="45" y="69" color="#666666" fontSize="12" text="容器ID："/>
+	
+	<s:Button id="closeBtn" x="274" y="-25" width="18" height="18"
+			  click="closeBtn_clickHandler(event)" icon="{ImageAssets.Close}"/>
+	
+	<c:PTextInput id="idText" x="95" y="62" width="150" height="25" restrict="a-zA-z0-9" />
+	
+	<s:CheckBox id="extContainerCB" x="45" y="25" label="这是一个继承至 Container 的容器" color="#333333"
+				fontSize="12" selected="true"/>
+	
+	<s:Button id="createBtn" x="95" y="105" width="60" height="25" label="创建"
+			  click="createBtn_clickHandler(event)" fontWeight="normal"/>
+	
+	<s:Button id="cancelBtn" x="185" y="105" width="60" height="25" label="取消"
+			  click="closeBtn_clickHandler(event)" color="#333333"/>
+	
+</canvas:CreateContainerPanel>

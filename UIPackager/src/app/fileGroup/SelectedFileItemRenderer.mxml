@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" 
+				autoDrawBackground="true"
+				fontFamily="宋体" fontSize="12"
+				height="25"
+				dataChange="dataChangeHandler(event)"
+				doubleClickEnabled="true"
+				doubleClick="doubleClickHandler(event)"
+				>
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			
+			import mx.collections.IList;
+			import mx.events.FlexEvent;
+			
+			import spark.components.List;
+			
+			
+			
+			protected function dataChangeHandler(event:FlexEvent):void
+			{
+				if(data == null) return;
+				labelField.text = data.name;
+			}
+			
+			
+			protected function doubleClickHandler(event:MouseEvent):void
+			{
+				var path:String = data.path;
+				var list:IList = (owner as List).dataProvider;
+				list.removeItemAt(itemIndex);
+				AppCommon.app.fileGroup.fileTree.uncheckItem(path);
+			}
+			
+			
+			override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
+			{
+				super.updateDisplayList(unscaledWidth, unscaledHeight);
+				this.toolTip = (labelField.x + labelField.width + 20 > owner.width) ? data.name : "";
+			}
+		]]>
+	</fx:Script>
+	
+	<s:Label id="labelField" x="10" height="100%" color="#333333" verticalAlign="middle"/>
+	
+</s:ItemRenderer>

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 fontFamily="微软雅黑"
+		 width="100%" height="100%"
+		 creationComplete="creationCompleteHandler(event)" xmlns:validators="app.validators.*"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			import app.common.ImageAssets;
+			import app.layers.Layer;
+			
+			import lolo.components.Button;
+			import lolo.core.Common;
+			
+			import mx.events.FlexEvent;
+			
+			import spark.events.TextOperationEvent;
+			
+			import toolbox.config.LanguageConfig;
+			
+			private var _isOpen:Boolean;
+			
+			
+			
+			
+			/**
+			 * 按钮的 label文本和语言包ID
+			 */
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				
+			}
+			
+			
+			
+			/**
+			 * 更新显示内容
+			 */
+			public function update():void
+			{
+				labelText.text = button.label;
+				labelIDText.text = button.labelID;
+				_isOpen = true;
+				
+				updateHeight();
+			}
+			
+			
+			
+			
+			/**
+			 * 更新该容器的高度
+			 */
+			private function updateHeight():void
+			{
+				openIcon.visible = !_isOpen;
+				closeIcon.visible = _isOpen;
+				border.visible
+					= labelText.visible
+					= labelIDLabel.visible = labelIDText.visible
+					= refreshBtn.visible
+					= _isOpen;
+				
+				_updateHeightCount = 0;
+				Common.stage.addEventListener(Event.ENTER_FRAME, doUpdateHeight);
+			}
+			
+			private var _updateHeightCount:int;
+			
+			private function doUpdateHeight(event:Event):void
+			{
+				_updateHeightCount++;
+				if(_updateHeightCount == 5) Common.stage.removeEventListener(Event.ENTER_FRAME, doUpdateHeight);
+				
+				labelText.height = int(labelText.textDisplay["contentHeight"]) + 5;
+				
+				labelIDLabel.y = labelIDText.y = refreshBtn.y = labelText.y + labelText.height + 10;
+				
+				border.height = labelIDLabel.y + labelIDLabel.height + 5;
+				this.height = _isOpen ? border.height + 5 : 33;
+				
+				AppCommon.controller.updateFrame();
+			}
+			
+			
+			
+			
+			
+			protected function labelText_changeHandler(event:TextOperationEvent=null):void
+			{
+				labelIDText.text = "";
+				button.labelID = "";
+				button.label = labelText.text;
+				updateHeight();
+			}
+			
+			
+			protected function labelIDText_changeHandler(event:TextOperationEvent=null):void
+			{
+				button.labelID = labelIDText.text;
+				labelText.text = button.label;
+				updateHeight();
+			}
+			
+			
+			
+			
+			protected function openOrClose(event:MouseEvent):void
+			{
+				_isOpen = !_isOpen;
+				updateHeight();
+			}
+			
+			
+			protected function text_focusEventHandler(event:FocusEvent):void
+			{
+				AppCommon.keyboardUsing = event.type == FocusEvent.FOCUS_IN;
+			}
+			
+			
+			
+			
+			protected function refreshBtn_clickHandler(event:MouseEvent):void
+			{
+				LanguageConfig.load(refreshLabelID);
+			}
+			
+			private function refreshLabelID():void
+			{
+				if(labelIDText.text != "") labelIDText_changeHandler();
+			}
+			
+			
+			
+			
+			/**
+			 * 当前选中的图层
+			 */
+			private function get selectedLayer():Layer { return AppCommon.controller.selectedLayer; }
+			
+			protected function get button():lolo.components.Button { return selectedLayer.element as lolo.components.Button; }
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+	</fx:Declarations>
+	
+	<s:BorderContainer id="border" x="5" width="235" height="115" borderColor="0xCCCCCC" />
+	
+	<s:Image id="openIcon" x="83" y="15" source="{ImageAssets.Add}"
+			 click="openOrClose(event)" />
+	<s:Image id="closeIcon" x="82" y="10" source="{ImageAssets.Min}"
+			 click="openOrClose(event)" />
+	<s:Label x="98" y="8" height="25" verticalAlign="middle" text="文本" toolTip="文本的内容"
+			 click="openOrClose(event)" />
+	
+	<s:TextArea id="labelText" x="9" y="35" width="227" height="25"
+				focusIn="text_focusEventHandler(event)"
+				focusOut="text_focusEventHandler(event)"
+				change="labelText_changeHandler(event)"
+				/>
+	
+	
+	<s:Label id="labelIDLabel" x="36" y="75" height="25" verticalAlign="middle" text="语言包ID："
+			 toolTip="文本在语言包中的ID" />
+	<s:TextInput id="labelIDText" x="98" y="75" width="75" height="25"
+				 focusIn="text_focusEventHandler(event)"
+				 focusOut="text_focusEventHandler(event)"
+				 change="labelIDText_changeHandler(event)"
+				 />
+	
+	<s:Button id="refreshBtn" x="178" y="75" width="25" height="25"
+			  icon="{ImageAssets.Refresh}" toolTip="刷新语言包"
+			  click="refreshBtn_clickHandler(event)"
+			  />
+</s:Group>

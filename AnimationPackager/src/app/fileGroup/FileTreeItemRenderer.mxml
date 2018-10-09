@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:MXTreeItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					  xmlns:s="library://ns.adobe.com/flex/spark" 
+					  xmlns:mx="library://ns.adobe.com/flex/mx"
+					  height="20" doubleClickEnabled="true"
+					  dataChange="dataChangeHandler(event)"
+					  doubleClick="doubleClickHandler(event)"
+					  >
+	<fx:Script>
+		<![CDATA[
+			import app.common.ImageAssets;
+			
+			import mx.controls.Tree;
+			import mx.events.FlexEvent;
+			
+			
+			
+			protected function dataChangeHandler(event:FlexEvent):void
+			{
+				if(data == null) return;
+				exportCB.selected = data.selected;
+				
+				icon.source = (data.children == null) ? ImageAssets.Animation : ImageAssets.Folder;
+			}
+			
+			
+			
+			protected function doubleClickHandler(event:MouseEvent):void
+			{
+				var tree:Tree = owner as Tree;
+				if(treeListData.hasChildren) {
+					tree.expandItem(data, !tree.isItemOpen(data));
+				}
+				else {
+					setSelected(!exportCB.selected);
+				}
+			}
+			
+			
+			public function setSelected(value:Boolean):void
+			{
+				data.selected = value;
+				exportCB.selected = value;
+				
+				if(data.children != null)
+					(owner as FileTree).setChildrenSelected(data, value);
+				
+				(owner as FileTree).itemSelectChanged();
+			}
+			
+			
+			protected function exportCB_clickHandler(event:MouseEvent):void
+			{
+				setSelected(exportCB.selected);
+			}
+			
+			
+			override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
+			{
+				super.updateDisplayList(unscaledWidth, unscaledHeight);
+				this.toolTip = (labelField.x + labelField.width + 20 > owner.width) ? data.name : "";
+			}
+		]]>
+	</fx:Script>
+	
+	<s:states>
+		<s:State name="normal" />            
+		<s:State name="hovered" />
+		<s:State name="selected" />
+	</s:states>
+	<s:HGroup left="0" right="0" top="0" bottom="0" verticalAlign="middle">
+		<s:Rect id="indentationSpacer" width="{treeListData.indent}" percentHeight="100" alpha="0">
+			<s:fill>
+				<s:SolidColor color="0xFFFFFF" />
+			</s:fill>
+		</s:Rect>
+		<s:Group id="disclosureGroup">
+			<s:BitmapImage source="{treeListData.disclosureIcon}" visible="{treeListData.hasChildren}" />
+		</s:Group>
+		<!--<s:BitmapImage id="icon" source="{treeListData.icon}" />-->
+		<s:CheckBox id="exportCB" click="exportCB_clickHandler(event)"/>
+		<s:BitmapImage id="icon" />
+		<s:Label id="labelField" text="{treeListData.label}" paddingTop="2"/>
+	</s:HGroup>
+</s:MXTreeItemRenderer>

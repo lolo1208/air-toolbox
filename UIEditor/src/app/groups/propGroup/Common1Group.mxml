@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:c="app.components.*"
+		 fontFamily="微软雅黑"
+		 width="100%" height="200"
+		 creationComplete="creationCompleteHandler(event)"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			import app.groups.layerGroup.LayerItemRenderer;
+			import app.layers.Layer;
+			import app.utils.LayerUtil;
+			
+			import mx.collections.ArrayList;
+			import mx.events.FlexEvent;
+			
+			import spark.components.List;
+			import spark.events.IndexChangeEvent;
+			import spark.events.TextOperationEvent;
+			
+			import toolbox.Toolbox;
+			
+			
+			
+			/**
+			 * 都有的公共属性
+			 */
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				mouseEnabledDDL.dataProvider = new ArrayList([ "true", "false" ]);
+				mouseChildrenDDL.dataProvider = new ArrayList([ "true", "false" ]);
+				visibleDDL.dataProvider = new ArrayList([ "true", "false" ]);
+			}
+			
+			
+			/**
+			 * 更新显示内容
+			 */
+			public function update():void
+			{
+				idText.text = selectedLayer.id;
+				
+				xText.text = selectedLayer.x.toString();
+				yText.text = selectedLayer.y.toString();
+				xText.editable = yText.editable = !LayerUtil.isModalBackground();
+				
+				widthText.text = selectedLayer.width.toString();
+				heightText.text = selectedLayer.height.toString();
+				
+				idText.editable = (!LayerUtil.isContainer() || AppCommon.canvas.containerTB.selectedIndex > 0);
+				
+				visibleDDL.selectedItem = selectedLayer.visible.toString();
+				
+				
+				mouseEnabledDDL.selectedItem = selectedLayer.mouseEnabled.toString();
+				
+				if(Toolbox.isASProject)
+				{
+					if(!LayerUtil.isBaseTextField() && !LayerUtil.isDisplayObject()){
+						mouseChildrenDDL.enabled = true;
+						mouseChildrenDDL.selectedItem = selectedLayer.mouseChildren.toString();
+					}
+					else {
+						mouseChildrenDDL.enabled = false;
+					}
+				}
+				else {
+					mouseEnabledDDL.enabled = mouseChildrenDDL.enabled = false;
+				}
+				
+			}
+			
+			
+			/**
+			 * ID
+			 */
+			protected function idText_changeHandler(event:TextOperationEvent):void
+			{
+				selectedLayer.id = idText.text;
+				
+				var list:List = AppCommon.layer.layerList;
+				for(var i:int=0; i < list.dataGroup.numElements; i++)
+				{
+					var renderer:LayerItemRenderer = list.dataGroup.getElementAt(i) as LayerItemRenderer;
+					if(renderer == null) continue;
+					if(renderer.data == list.selectedItem) {
+						renderer.updateLayerName();
+						return;
+					}
+				}
+			}
+			
+			
+			/**
+			 * x、y
+			 */
+			protected function xyText_changeHandler(event:TextOperationEvent):void
+			{
+				if(xText.text != "" && xText.text != "-") {
+					selectedLayer.x = int(xText.text);
+					xText.text = selectedLayer.x.toString();
+				}
+				if(yText.text != "" && yText.text != "-") {
+					selectedLayer.y = int(yText.text);
+					yText.text = selectedLayer.y.toString();
+				}
+				AppCommon.controller.updateFrame();
+			}
+			
+			
+			/**
+			 * width、height
+			 */
+			protected function widthText_changeHandler(event:TextOperationEvent):void
+			{
+				var value:uint = uint(widthText.text);
+				if(value != selectedLayer.width) selectedLayer.width = value;
+				if(value == 0 && LayerUtil.isBaseButton()) LayerUtil.getBaseButton().resetSize();
+				AppCommon.controller.updateFrame();
+			}
+			
+			protected function heightText_changeHandler(event:TextOperationEvent):void
+			{
+				var value:uint = uint(heightText.text);
+				if(value != selectedLayer.height) selectedLayer.height = value;
+				if(value == 0 && LayerUtil.isBaseButton()) LayerUtil.getBaseButton().resetSize();
+				AppCommon.controller.updateFrame();
+			}
+			
+			
+			
+			
+			/**
+			 * mouseEnabled
+			 */
+			protected function mouseEnabledDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				selectedLayer.mouseEnabled = mouseEnabledDDL.selectedItem == "true";
+			}
+			
+			/**
+			 * mouseChildren
+			 */
+			protected function mouseChildrenDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				selectedLayer.mouseChildren = mouseChildrenDDL.selectedItem == "true";
+			}
+			
+			
+			
+			/**
+			 * visible
+			 */
+			protected function visibleDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				selectedLayer.visible = visibleDDL.selectedItem == "true";
+				
+				if(selectedLayer.visible) selectedLayer.veEye = true;
+				var list:List = AppCommon.layer.layerList;
+				var item:LayerItemRenderer = list.dataGroup.getElementAt(list.selectedIndex) as LayerItemRenderer;
+				if(item != null) item.updateVEStates();
+			}
+			
+			
+			
+			
+			/**
+			 * 当前选中的图层
+			 */
+			private function get selectedLayer():Layer { return AppCommon.controller.selectedLayer; }
+		]]>
+	</fx:Script>
+	
+	
+	<fx:Declarations>
+	</fx:Declarations>
+	
+	
+	<s:Label y="8" width="80" height="25" text="ID：" textAlign="right" verticalAlign="middle"/>
+	<c:PTextInput id="idText" x="80" y="8" width="160" height="25" restrict="a-zA-z0-9"
+				  change="idText_changeHandler(event)" />
+	
+	
+	
+	<s:Label y="48" width="80" height="25" text="x：" textAlign="right" verticalAlign="middle"/>
+	<c:PTextInput id="xText" x="80" y="48" width="50" height="25" restrict="0-9\-"
+				  change="xyText_changeHandler(event)" />
+	
+	<s:Label x="130" y="48" width="60" height="25" text="y：" textAlign="right" verticalAlign="middle"/>
+	<c:PTextInput id="yText" x="190" y="48" width="50" height="25" restrict="0-9\-" 
+				  change="xyText_changeHandler(event)" />
+	
+	
+	
+	<s:Label y="88" width="80" height="25" text="width：" textAlign="right" verticalAlign="middle"/>
+	<c:PTextInput id="widthText" x="80" y="88" width="50" height="25" restrict="0-9"
+				  change="widthText_changeHandler(event)" />
+	
+	<s:Label x="130" y="88" width="60" height="25" text="height：" textAlign="right" verticalAlign="middle"/>
+	<c:PTextInput id="heightText" x="190" y="88" width="50" height="25" restrict="0-9"
+				  change="heightText_changeHandler(event)" />
+	
+	
+	<s:Label y="128" width="80" height="25" textAlign="right" verticalAlign="middle"
+			 text="interactive：" toolTip="启用或禁用鼠标交互"/>
+	<s:DropDownList id="mouseEnabledDDL" x="80" y="128" width="75" height="25" toolTip="mouseEnabled"
+					change="mouseEnabledDDL_changeHandler(event)"/>
+	<s:DropDownList id="mouseChildrenDDL" x="165" y="128" width="75" height="25" toolTip="mouseChildren"
+					change="mouseChildrenDDL_changeHandler(event)"/>
+	
+	
+	<s:Label y="168" width="80" height="25" text="visible：" textAlign="right" verticalAlign="middle"/>
+	<s:DropDownList id="visibleDDL" x="80" y="168" width="90" height="25" change="visibleDDL_changeHandler(event)"/>
+</s:Group>

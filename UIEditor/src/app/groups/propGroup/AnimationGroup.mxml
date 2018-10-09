@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:c="app.components.*"
+		 fontFamily="微软雅黑"
+		 width="100%" height="40"
+		 creationComplete="creationCompleteHandler(event)"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			import app.common.ImageAssets;
+			import app.layers.Layer;
+			import app.utils.LayerUtil;
+			
+			import lolo.display.Animation;
+			import lolo.events.AnimationEvent;
+			
+			import mx.events.FlexEvent;
+			
+			import spark.events.TextOperationEvent;
+			
+			/**当前注册帧刷新事件侦听的动画*/
+			private var _ani:Animation;
+			
+			
+			/**
+			 * 动画属性
+			 */
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				
+			}
+			
+			
+			/**
+			 * 更新显示内容
+			 */
+			public function update():void
+			{
+				_ani = LayerUtil.getAni();
+				
+				fpsText.text = _ani.fps.toString();
+				_ani.dispatchEnterFrame = true;
+				_ani.addEventListener(AnimationEvent.ENTER_FRAME, animation_enterFrameHandler);
+				animation_enterFrameHandler();
+				mcBtn_clickHandler();
+			}
+			
+			
+			
+			/**
+			 * fps
+			 */
+			protected function fpsText_changeHandler(event:TextOperationEvent):void
+			{
+				var fps:uint = uint(fpsText.text);
+				if(fps == 0) fps = 1;
+				_ani.fps = fps;
+			}
+			
+			
+			/**
+			 * frame
+			 */
+			protected function frameText_changeHandler(event:TextOperationEvent):void
+			{
+				_ani.gotoAndStop(uint(frameText.text));
+				mcBtn_clickHandler();
+			}
+			
+			
+			/**
+			 * 播放或暂停动画
+			 */
+			protected function mcBtn_clickHandler(event:MouseEvent=null):void
+			{
+				if(event != null) {
+					_ani.playing = !_ani.playing;
+					if(!_ani.playing) _ani.currentFrame = 1;
+				}
+				mcBtn.setStyle("icon", _ani.playing ? ImageAssets.Stop : ImageAssets.Play);
+			}
+			
+			
+			/**
+			 * 帧刷新
+			 */
+			private function animation_enterFrameHandler(event:AnimationEvent=null):void
+			{
+				if(_ani == null) return;
+				if(LayerUtil.getAni() == null) {
+					_ani.removeEventListener(AnimationEvent.ENTER_FRAME, animation_enterFrameHandler);
+					_ani = null;
+					return;
+				}
+				frameText.text = String(_ani.currentFrame);
+				AppCommon.prop.updateBounds();
+			}
+			
+			
+			
+			
+			/**
+			 * 当前选中的图层
+			 */
+			private function get selectedLayer():Layer { return AppCommon.controller.selectedLayer; }
+			
+		]]>
+	</fx:Script>
+	
+	
+	
+	<s:Label x="55" y="8" width="40" height="25" text="fps：" textAlign="right" verticalAlign="middle"/>
+
+	<c:PTextInput id="fpsText" x="95" y="8" width="40" height="25" restrict="0-9"
+				  change="fpsText_changeHandler(event)"/>
+	
+	<s:Label x="145" y="8" width="55" height="25" text="frame：" textAlign="right" verticalAlign="middle" />
+	
+	<c:PTextInput id="frameText" x="200" y="8" width="40" height="25" restrict="0-9" 
+				  change="frameText_changeHandler(event)"/>
+	
+	<s:Button id="mcBtn" x="23" y="8" width="25" height="25"
+			  click="mcBtn_clickHandler(event)"/>
+</s:Group>

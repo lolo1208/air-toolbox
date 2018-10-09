@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:c="app.components.*"
+		 fontFamily="微软雅黑"
+		 width="100%" height="75"
+		 creationComplete="creationCompleteHandler(event)"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			import app.layers.Layer;
+			
+			import mx.collections.ArrayList;
+			import mx.events.FlexEvent;
+			
+			import spark.events.IndexChangeEvent;
+			import spark.events.TextOperationEvent;
+			
+			
+			
+			/**
+			 * 按内容自动调整按钮的尺寸
+			 */
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				autoSizeDDL.dataProvider = new ArrayList(["true", "false"]);
+			}
+			
+			
+			/**
+			 * 更新显示内容
+			 */
+			public function update():void
+			{
+				autoSizeDDL.selectedItem = element.autoSize.toString();
+				autoSizeDDL_changeHandler();
+				minWText.text = element.minWidth.toString();
+				maxWText.text = element.maxWidth.toString();
+				minHText.text = element.minHeight.toString();
+				maxHText.text = element.maxHeight.toString();
+			}
+			
+			
+			
+			
+			/**
+			 * autoSize
+			 */
+			protected function autoSizeDDL_changeHandler(event:IndexChangeEvent=null):void
+			{
+				var autoSize:Boolean = autoSizeDDL.selectedIndex == 0;
+				if(event != null) selectedLayer.setStyle("autoSize", autoSize);
+				minWText.editable = maxWText.editable = minHText.editable = maxHText.editable = autoSize;
+				if(!autoSize) {
+					element.width = element.width;
+					element.height = element.height;
+				}
+				AppCommon.controller.updateFrame();
+			}
+			
+			
+			
+			/**
+			 * size
+			 */
+			protected function btnSizeText_changeHandler(event:TextOperationEvent):void
+			{
+				selectedLayer.setStyle("minWidth", int(minWText.text));
+				selectedLayer.setStyle("maxWidth", int(maxWText.text));
+				selectedLayer.setStyle("minHeight", int(minHText.text));
+				selectedLayer.setStyle("maxHeight", int(maxHText.text));
+				AppCommon.controller.updateFrame();
+			}
+			
+			
+			
+			
+			/**
+			 * 当前选中的图层
+			 */
+			private function get selectedLayer():Layer { return AppCommon.controller.selectedLayer; }
+			
+			private function get element():* { return selectedLayer.element; }
+		]]>
+	</fx:Script>
+	
+	
+	<fx:Declarations>
+	</fx:Declarations>
+	
+	
+	<s:Rect x="1" width="100%" height="1"><s:fill><s:SolidColor color="#CCCCCC"/></s:fill></s:Rect>
+	
+	
+	<s:Label y="8" width="80" height="25" text="autoSize：" textAlign="right" verticalAlign="middle"
+			 toolTip="自动调整按钮的尺寸" />
+	<s:DropDownList id="autoSizeDDL" x="80" y="8" width="90" height="25" change="autoSizeDDL_changeHandler(event)"/>
+	<c:PTextInput id="minWText" x="45" y="45" width="45" height="22" restrict="0-9" toolTip="minWidth" prompt="minW"
+				  change="btnSizeText_changeHandler(event)" />
+	<c:PTextInput id="maxWText" x="95" y="45" width="45" height="22" restrict="0-9" toolTip="maxWidth" prompt="maxW"
+				  change="btnSizeText_changeHandler(event)" />
+	<c:PTextInput id="minHText" x="145" y="45" width="45" height="22" restrict="0-9" toolTip="minHeight" prompt="minH"
+				  change="btnSizeText_changeHandler(event)" />
+	<c:PTextInput id="maxHText" x="195" y="45" width="45" height="22" restrict="0-9" toolTip="maxHeight" prompt="maxH"
+				  change="btnSizeText_changeHandler(event)" />
+	
+	
+</s:Group>

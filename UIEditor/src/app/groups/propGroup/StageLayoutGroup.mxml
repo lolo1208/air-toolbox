@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:c="app.components.*"
+		 fontFamily="微软雅黑"
+		 width="100%" height="200"
+		 creationComplete="creationCompleteHandler(event)"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			import app.layers.Layer;
+			
+			import mx.events.FlexEvent;
+			
+			import spark.events.TextOperationEvent;
+			
+			
+			
+			
+			/**
+			 * 舞台相对坐标
+			 */
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+			}
+			
+			
+			/**
+			 * 更新显示内容
+			 */
+			public function update():void
+			{
+				enabledCB.selected = stageLayout.enabled;
+				hCB.selected = stageLayout.hEnabled;
+				vCB.selected = stageLayout.vEnabled;
+				widthText.text = stageLayout.width;
+				heightText.text = stageLayout.height;
+				xText.text = offsetXText.text = paddingRightText.text = "";
+				yText.text = offsetYText.text = paddingBottomText.text = "";
+				if(stageLayout.hKey != "") this[stageLayout.hKey + "Text"].text = stageLayout.hValue;
+				if(stageLayout.vKey != "") this[stageLayout.vKey + "Text"].text = stageLayout.vValue;
+				
+				offsetXV.validate();
+				offsetYV.validate();
+				enabledCB_clickHandler();
+			}
+			
+			
+			
+			
+			protected function enabledCB_clickHandler(event:MouseEvent=null):void
+			{
+				border.visible
+					= hCB.visible = widthText.visible = xText.visible = offsetXText.visible = paddingRightText.visible
+					= vCB.visible = heightText.visible = yText.visible = offsetYText.visible = paddingBottomText.visible
+					= enabledCB.selected;
+				
+				height = enabledCB.selected ? 205 : 40;
+				
+				stageLayout.enabled = enabledCB.selected;
+				hCB_clickHandler();
+				vCB_clickHandler();
+			}
+			
+			
+			protected function hCB_clickHandler(event:MouseEvent=null):void
+			{
+				this.setFocus();
+				if(hCB.selected) {
+					widthText.enabled = true;
+					checkMutexProp();
+				}
+				else {
+					widthText.enabled = xText.enabled = offsetXText.enabled = paddingRightText.enabled = false;
+				}
+				
+				stageLayout.hEnabled = hCB.selected;
+			}
+			
+			
+			protected function vCB_clickHandler(event:MouseEvent=null):void
+			{
+				this.setFocus();
+				if(vCB.selected) {
+					heightText.enabled = true;
+					checkMutexProp();
+				}
+				else {
+					heightText.enabled = yText.enabled = offsetYText.enabled = paddingBottomText.enabled = false;
+				}
+				
+				stageLayout.vEnabled = vCB.selected;
+			}
+			
+			
+			/***
+			 * 检查互斥属性
+			 */
+			public function checkMutexProp():void
+			{
+				if(xText.text != "") {
+					setTextEnabled(xText, true);
+					setTextEnabled(offsetXText, false);
+					setTextEnabled(paddingRightText, false);
+					xText.text = xText.text.replace("%", "");
+					if(xText.text != "")
+						xText.text += "%";
+					else
+						checkMutexProp();
+					
+					stageLayout.hKey = "x";
+					stageLayout.hValue = xText.text;
+				}
+				else if(paddingRightText.text != "") {
+					setTextEnabled(paddingRightText, true);
+					setTextEnabled(xText, false);
+					setTextEnabled(offsetXText, false);
+					
+					stageLayout.hKey = "paddingRight";
+					stageLayout.hValue = paddingRightText.text;
+				}
+				else if(offsetXText.text != "") {
+					setTextEnabled(offsetXText, true);
+					setTextEnabled(xText, false);
+					setTextEnabled(paddingRightText, false);
+					
+					stageLayout.hKey = "offsetX";
+					stageLayout.hValue = offsetXText.text;
+				}
+				else {
+					setTextEnabled(xText, true);
+					setTextEnabled(offsetXText, true);
+					setTextEnabled(paddingRightText, true);
+					
+					stageLayout.hKey = stageLayout.hValue = "";
+				}
+				
+				
+				if(yText.text != "") {
+					setTextEnabled(yText, true);
+					setTextEnabled(offsetYText, false);
+					setTextEnabled(paddingBottomText, false);
+					yText.text = yText.text.replace("%", "");
+					if(yText.text != "")
+						yText.text += "%";
+					else
+						checkMutexProp();
+					
+					stageLayout.vKey = "y";
+					stageLayout.vValue = yText.text;
+				}
+				else if(paddingBottomText.text != "") {
+					setTextEnabled(paddingBottomText, true);
+					setTextEnabled(yText, false);
+					setTextEnabled(offsetYText, false);
+					
+					stageLayout.vKey = "paddingBottom";
+					stageLayout.vValue = paddingBottomText.text;
+				}
+				else if(offsetYText.text != "") {
+					setTextEnabled(offsetYText, true);
+					setTextEnabled(yText, false);
+					setTextEnabled(paddingBottomText, false);
+					
+					stageLayout.vKey = "offsetY";
+					stageLayout.vValue = offsetYText.text;
+				}
+				else {
+					setTextEnabled(yText, true);
+					setTextEnabled(offsetYText, true);
+					setTextEnabled(paddingBottomText, true);
+					
+					stageLayout.vKey = stageLayout.vValue = "";
+				}
+			}
+			
+			private function setTextEnabled(text:PTextInput, enabled:Boolean):void
+			{
+				text.enabled = enabled;
+				if(!enabled) text.text = "";
+			}
+			
+			protected function widthText_changeHandler(event:TextOperationEvent):void
+			{
+				stageLayout.width = widthText.text;
+			}
+			
+			protected function heightText_changeHandler(event:TextOperationEvent):void
+			{
+				stageLayout.height = heightText.text;
+			}
+			
+			
+			
+			
+			private function get stageLayout():Object
+			{
+				//return _layer == null ? {} : _layer.stageLayout;
+				return selectedLayer.stageLayout;
+			}
+			
+			
+			/**
+			 * 当前选中的图层
+			 */
+			private function get selectedLayer():Layer { return AppCommon.controller.selectedLayer; }
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<s:NumberValidator id="offsetXV" required="false"
+						   source="{offsetXText}" property="text"
+						   trigger="{offsetXText}" triggerEvent="focusOut"
+						   />
+			
+		<s:NumberValidator id="offsetYV" required="false"
+						   source="{offsetYText}" property="text"
+						   trigger="{offsetYText}" triggerEvent="focusOut"
+						   />
+	</fx:Declarations>
+	<s:BorderContainer id="border" x="5" width="235" height="200" borderColor="0xCCCCCC" />
+	<s:CheckBox id="enabledCB" x="80" y="8" label="使用舞台相对坐标"
+				toolTip="参数详解可参考 Common.layout.stageLayout() 方法"
+				click="enabledCB_clickHandler(event)"
+				/>
+	
+	
+	<s:CheckBox id="hCB" x="43" y="40" label="水平" click="hCB_clickHandler(event)" selected="true"/>
+	<c:PTextInput id="widthText" x="20" y="70" width="90" height="22"
+				 change="widthText_changeHandler(event)" prompt="width" restrict="0-9"/>
+	<c:PTextInput id="xText" x="20" y="100" width="90" height="22" prompt="x" restrict="0-9"
+				 change="checkMutexProp()" />
+	<c:PTextInput id="offsetXText" x="20" y="130" width="90" height="22" prompt="offsetX" restrict="0-9\-"
+				 change="checkMutexProp()" />
+	<c:PTextInput id="paddingRightText" x="20" y="160" width="90" height="22" prompt="paddingRight" restrict="0-9"
+				 change="checkMutexProp()" />
+	
+	
+	<s:CheckBox id="vCB" x="158" y="40" label="垂直" click="vCB_clickHandler(event)"
+				selected="true"/>
+	<c:PTextInput id="heightText" x="135" y="70" width="90" height="22"
+				 change="heightText_changeHandler(event)" prompt="height" restrict="0-9"/>
+	<c:PTextInput id="yText" x="135" y="100" width="90" height="22" prompt="y" restrict="0-9"
+				 change="checkMutexProp()" />
+	<c:PTextInput id="offsetYText" x="135" y="130" width="90" height="22" prompt="offsetY" restrict="0-9\-"
+				 change="checkMutexProp()" />
+	<c:PTextInput id="paddingBottomText" x="135" y="160" width="90" height="22" prompt="paddingBottom" restrict="0-9"
+				 change="checkMutexProp()" />
+</s:Group>

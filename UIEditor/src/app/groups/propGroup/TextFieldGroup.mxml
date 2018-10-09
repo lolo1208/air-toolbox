@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:c="app.components.*"
+		 fontFamily="微软雅黑"
+		 width="100%" height="120"
+		 creationComplete="creationCompleteHandler(event)"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			import app.layers.Layer;
+			import app.utils.LayerUtil;
+			
+			import lolo.core.Common;
+			import lolo.display.BaseTextField;
+			
+			import mx.collections.ArrayList;
+			import mx.events.FlexEvent;
+			
+			import spark.events.IndexChangeEvent;
+			
+			import toolbox.Toolbox;
+			import toolbox.config.EmbedFontConfig;
+			
+			
+			/**
+			 * 文本框属性
+			 */
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				multilineDDL.dataProvider = new ArrayList([ "true", "false" ]);
+				autoSizeDDL.dataProvider = new ArrayList([ "none", "left", "center", "right" ]);
+			}
+			
+			
+			/**
+			 * 更新显示内容
+			 */
+			public function update():void
+			{
+				autoSizeDDL.selectedItem = textField.autoSize;
+				multilineDDL.selectedItem = textField.multiline.toString();
+				
+				if(embedFontsDDL.dataProvider == null) refreshEmbedFonts();
+				else showEmbedFonts();
+				
+				multilineDDL.enabled = Toolbox.isASProject || LayerUtil.isInputText();
+			}
+			
+			
+			
+			
+			/**
+			 * autoSize
+			 */
+			protected function autoSizeDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				textField.autoSize = autoSizeDDL.selectedItem;
+			}
+			
+			
+			/**
+			 * multiline
+			 */
+			protected function multilineDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				textField.multiline = multilineDDL.selectedItem == "true";
+				AppCommon.controller.updateFrame();
+			}
+			
+			
+			/**
+			 * embedFonts
+			 */
+			protected function embedFontsDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				textField.embedFonts = embedFontsDDL.selectedIndex != 0;
+				selectedLayer.setStyle("font", textField.embedFonts
+					? embedFontsDDL.selectedItem.name
+					: Common.config.getStyle("textField").font
+				);
+				AppCommon.controller.updateFrame();
+			}
+			
+			
+			/**
+			 * 刷新嵌入字体列表
+			 */
+			private function refreshEmbedFonts():void
+			{
+				if(!Toolbox.isASProject) return;
+				
+				var children:XMLList = EmbedFontConfig.config.item;
+				var arr:Array = [{ name:"不使用" }];
+				for each(var item:XML in children) arr.push({ name:String(item.@fontName) });
+				embedFontsDDL.dataProvider = new ArrayList(arr);
+				showEmbedFonts();
+			}
+			
+			/**
+			 * 显示、选中当前字体的嵌入字体
+			 */
+			private function showEmbedFonts():void
+			{
+				embedFontsDDL.selectedIndex = 0;
+				if(textField.embedFonts)
+				{
+					for(var i:int = 0; i < embedFontsDDL.dataProvider.length; i++) {
+						if(embedFontsDDL.dataProvider.getItemAt(i).name == selectedLayer.style.font) {
+							embedFontsDDL.selectedIndex = i;
+							break;
+						}
+					}
+				}
+			}
+			
+			
+			
+			
+			/**
+			 * 当前选中的图层
+			 */
+			private function get selectedLayer():Layer { return AppCommon.controller.selectedLayer; }
+			
+			private function get textField():BaseTextField { return LayerUtil.getTextField(); }
+		]]>
+	</fx:Script>
+	
+	<s:Label y="8" width="80" height="25" text="autoSize：" textAlign="right" verticalAlign="middle"
+			 toolTip="自动调整尺寸" />
+	<s:DropDownList id="autoSizeDDL" x="80" y="8" width="90" height="25"
+					change="autoSizeDDL_changeHandler(event)"/>
+	
+	
+	<s:Label y="48" width="80" height="25" text="multiline：" textAlign="right" verticalAlign="middle"
+			 toolTip="多行并自动换行" />
+	<s:DropDownList id="multilineDDL" x="80" y="48" width="90" height="25"
+					change="multilineDDL_changeHandler(event)"/>
+	
+	
+	<s:Label x="-5" y="89" width="85" height="25" fontSize="11" text="embedFonts："
+			 textAlign="right" verticalAlign="middle" toolTip="嵌入字体" />
+	<s:DropDownList id="embedFontsDDL" x="80" y="88" width="160" height="25" labelField="name"
+					change="embedFontsDDL_changeHandler(event)"
+					/>
+	
+</s:Group>

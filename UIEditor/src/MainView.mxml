@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<main:Main xmlns:fx="http://ns.adobe.com/mxml/2009"
+		   xmlns:s="library://ns.adobe.com/flex/spark"
+		   xmlns:mx="library://ns.adobe.com/flex/mx"
+		   xmlns:main="app.main.*"
+		   xmlns:canvasGroup="app.groups.canvasGroup.*"
+		   frameRate="60" creationPolicy="all" showStatusBar="false"
+		   width="830" height="600"
+		   creationComplete="creationCompleteHandler(event)"
+		   addedToStage="addedToStageHandler(event)"
+		   resize="resizeHandler(event)"
+		   >
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<fx:Style source="styles.css" />
+	
+	
+	<mx:MenuBar id="menuBar" x="0" y="0" width="830" height="25" labelField="label"
+				dataProvider="{menuData}"
+				itemClick="menuBar_itemClickHandler(event)"
+				/>
+	
+	<main:LeftTopView id="lt" x="5" y="35" />
+	<main:LeftBottomView id="lb" x="5" y="250" />
+	
+	<main:RightTopView id="rt" x="565" y="35" />
+	<main:RightBottomView id="rb" x="565" y="250" />
+	
+	<canvasGroup:CanvasGroupView id="canvas" x="275" y="35" />
+</main:Main>

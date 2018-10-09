@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009"
+				xmlns:s="library://ns.adobe.com/flex/spark"
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+				height="25" dataChange="dataChangeHandler(event)" fontFamily="宋体">
+	<fx:Script>
+		<![CDATA[
+			import app.canvasGroup.StateTimeline;
+			import app.common.AppCommon;
+			import app.common.ImageAssets;
+			
+			import lolo.display.Skin;
+			
+			import mx.events.FlexEvent;
+			
+			import toolbox.Toolbox;
+			
+			protected function dataChangeHandler(event:FlexEvent):void
+			{
+				if(data == null) return;
+				update();
+				checkSourceName();
+			}
+			
+			
+			public function checkSourceName():void
+			{
+				data.snError = null;
+				var states:Array = data.states;
+				var stl:StateTimeline = AppCommon.app.canvasGroup.stateTimeLine;
+				for(var i:int = 0; i < states.length; i++)
+				{
+					var state:String = stl.getStateName(i);
+					var sn:String = states[i];
+					if(sn == "") continue;
+					
+					var url:String = sn.replace(/\./g, "/");
+					url = Toolbox.resRootDir + "ui/" + url + ".png";
+					
+					if(!new File(url).exists) data.snError = state;
+				}
+				showError();
+			}
+			
+			
+			public function update():void
+			{
+				textField.text = data.name;
+			}
+			
+			
+			public function showError():void
+			{
+				if(data.repeat) {
+					errorIcon.visible = true;
+					this.toolTip = "皮肤名称有重复！";
+				}
+				else if(data.snError != null) {
+					errorIcon.visible = true;
+					this.toolTip = data.snError + " 状态的sourceName有误！";
+				}
+				else {
+					errorIcon.visible = false;
+					this.toolTip = "";
+				}
+			}
+			
+			
+		]]>
+	</fx:Script>
+	
+	<s:Image id="errorIcon" x="4" y="8" source="{ImageAssets.Error}" />
+	<s:Label id="textField" x="20" height="100%" verticalAlign="middle" />
+	
+</s:ItemRenderer>

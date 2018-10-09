@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<main:Main xmlns:fx="http://ns.adobe.com/mxml/2009"
+		   xmlns:s="library://ns.adobe.com/flex/spark"
+		   xmlns:mx="library://ns.adobe.com/flex/mx"
+		   xmlns:main="app.main.*"
+		   xmlns:canvasGroup="app.canvasGroup.*"
+		   xmlns:layerPanel="app.layerPanel.*"
+		   xmlns:views="toolbox.views.*"
+		   xmlns:propertiesPanel="app.propertiesPanel.*"
+		   width="820" height="520"
+		   frameRate="60" showStatusBar="false" creationPolicy="all"
+		   addedToStage="addedToStageHandler(event)"
+		   creationComplete="creationCompleteHandler(event)"
+		   resize="resizeHandler(event)"
+		   >
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Style source="styles.css" />
+	
+	
+	<mx:MenuBar id="menuBar" x="0" y="0" width="820" height="25" labelField="label"
+				dataProvider="{menuData}"
+				itemClick="menuBar_itemClickHandler(event)"
+				/>
+	
+	
+	<canvasGroup:CanvasGroupView id="canvasGroup" x="5" y="30"
+								 />
+	
+	
+	<layerPanel:LayerPanelView id="layerPanel" x="585" y="30" height="225"
+							   />
+	
+	
+	<propertiesPanel:PropertiesPanelView id="propertiesPanel" x="585" y="265" height="180"
+										 />
+	
+	
+</main:Main>

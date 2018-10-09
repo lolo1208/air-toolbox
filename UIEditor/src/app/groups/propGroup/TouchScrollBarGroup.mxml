@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:c="app.components.*"
+		 fontFamily="微软雅黑"
+		 width="100%" height="80"
+		 creationComplete="creationCompleteHandler(event)"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			import app.layers.TouchScrollBarLayer;
+			
+			import lolo.core.Constants;
+			
+			import mx.collections.ArrayList;
+			import mx.events.FlexEvent;
+			
+			import spark.events.IndexChangeEvent;
+			
+			
+			
+			/**
+			 * Touch滚动条属性
+			 */
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				bouncesDDL.dataProvider = new ArrayList(["true", "false"]);
+				scrollPolicyDDL.dataProvider = new ArrayList([Constants.POLICY_AUTO, Constants.POLICY_ON, Constants.POLICY_OFF]);
+			}
+			
+			
+			
+			/**
+			 * 更新显示内容
+			 */
+			public function update():void
+			{
+				bouncesDDL.selectedItem = selectedLayer.scrollBar.bounces.toString();
+				scrollPolicyDDL.selectedItem = selectedLayer.scrollBar.scrollPolicy;
+			}
+			
+			
+			
+			
+			/**
+			 * bounces
+			 */
+			protected function bouncesDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				selectedLayer.scrollBar.bounces = bouncesDDL.selectedItem == "true";
+			}
+			
+			
+			/**
+			 * scrollPolicy
+			 */
+			protected function scrollPolicyDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				selectedLayer.scrollBar.scrollPolicy = scrollPolicyDDL.selectedItem;
+			}
+			
+			
+			
+			
+			
+			/**
+			 * 当前选中的图层
+			 */
+			private function get selectedLayer():TouchScrollBarLayer
+			{
+				return AppCommon.controller.selectedLayer as TouchScrollBarLayer;
+			}
+		]]>
+	</fx:Script>
+	
+	
+	<s:Label y="8" width="80" height="25" text="bounces：" textAlign="right" verticalAlign="middle"
+			 toolTip="是否启用回弹效果" />
+	<s:DropDownList id="bouncesDDL" x="80" y="8" width="160" height="25"
+					change="bouncesDDL_changeHandler(event)" />
+	
+	
+	<s:Label y="48" width="80" height="25" textAlign="right" verticalAlign="middle"
+			 text="scrollPolicy：" toolTip="滚动条显示策略"/>
+	<s:DropDownList id="scrollPolicyDDL" x="80" y="48" width="160" height="25"
+					change="scrollPolicyDDL_changeHandler(event)"
+					/>
+	
+</s:Group>

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009"
+		  xmlns:s="library://ns.adobe.com/flex/spark"
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  xmlns:c="app.components.*"
+		  gap="-1" fontFamily="微软雅黑"
+		  width="100%" height="100%"
+		  creationComplete="creationCompleteHandler(event)"
+		  >
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			import app.common.ImageAssets;
+			import app.controls.Reload;
+			import app.layers.Layer;
+			import app.utils.LayerUtil;
+			
+			import mx.collections.ArrayList;
+			import mx.events.FlexEvent;
+			
+			import spark.events.IndexChangeEvent;
+			
+			import toolbox.config.SkinConfig;
+			import toolbox.config.StyleConfig;
+			
+			
+			
+			/**
+			 * 在样式界面最上面显示的样式
+			 */
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				
+			}
+			
+			
+			
+			/**
+			 * 更新显示内容
+			 */
+			public function update():void
+			{
+				this.removeAllElements();
+				
+				
+				if(styleNameDDL.dataProvider == null) refreshStyleList();
+				for(var i:int = 0; i < styleNameDDL.dataProvider.length; i++)
+				{
+					if(styleNameDDL.dataProvider.getItemAt(i) == selectedLayer.styleName) {
+						styleNameDDL.selectedIndex = i;
+						break;
+					}
+				}
+				addElement(styleNameG);
+				
+				
+				if(LayerUtil.isBaseButton())
+				{
+					selectSkinName(skinNameDDL, LayerUtil.getBaseButton().skinName);
+					addElement(skinNameG);
+				}
+				
+				
+				updateHeight();
+			}
+			
+			
+			/**
+			 * 更新该容器的高度
+			 */
+			public function updateHeight():void
+			{
+				this.height = this.numElements * 40;
+			}
+			
+			
+			
+			/**
+			 * 刷新皮肤列表
+			 */
+			public function refreshSkinList():void
+			{
+				var arrList:ArrayList = new ArrayList( [{ name:"" }].concat(SkinConfig.skinList) );
+				skinNameDDL.dataProvider = arrList;
+				
+				if(parent != null) update();
+			}
+			
+			
+			
+			/**
+			 * 刷新样式列表
+			 */
+			private function refreshStyleList():void
+			{
+				styleNameDDL.dataProvider = new ArrayList();
+				for each(var item:XML in StyleConfig.config.children()) {
+					styleNameDDL.dataProvider.addItem(String(item.@name));
+				}
+			}
+			
+			
+			
+			/**
+			 * styleName
+			 */
+			protected function styleNameDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				selectedLayer.styleName = styleNameDDL.selectedItem;
+				AppCommon.style.update();
+				AppCommon.controller.updateFrame();
+			}
+			
+			protected function refreshStyleBtn_clickHandler(event:MouseEvent):void
+			{
+				this.setFocus();
+				Reload.alert("刷新样式表", refreshCallback);
+			}
+			
+			private function  refreshCallback(confirmed:Boolean):void
+			{
+				if(confirmed) StyleConfig.load(Reload.reload);
+			}
+			
+			
+			
+			
+			
+			/**
+			 * skinName
+			 */
+			protected function skinNameDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				selectedLayer.setStyle("skinName", skinNameDDL.selectedItem.name);
+			}
+			
+			
+			protected function refreshSkinBtn_clickHandler(event:MouseEvent):void
+			{
+				this.setFocus();
+				AppCommon.skin.refresh();
+				AppCommon.app.lb["contentVS"].selectedIndex = 1;
+			}
+			
+			
+			/**
+			 * 在皮肤列表中选中对应的皮肤
+			 * @param ddl
+			 * @param skinName
+			 */
+			private function selectSkinName(ddl:DropDownList, skinName:String):void
+			{
+				ddl.selectedIndex = -1;
+				for(var i:int = 0; i < ddl.dataProvider.length; i++) {
+					if(ddl.dataProvider.getItemAt(i).name == skinName) {
+						ddl.selectedIndex = i;
+						return;
+					}
+				}
+			}
+			
+			
+			
+			
+			/**
+			 * 当前选中的图层
+			 */
+			private function get selectedLayer():Layer { return AppCommon.controller.selectedLayer; }
+		]]>
+	</fx:Script>
+	
+	
+	<fx:Declarations>
+	</fx:Declarations>
+	
+	
+	
+	<s:Group id="styleNameG" width="100%" height="40">
+		<s:Label x="0" y="8" width="80" height="25" text="styleName：" textAlign="right" verticalAlign="middle"
+				 toolTip="样式名称" />
+		<s:DropDownList id="styleNameDDL" x="80" y="8" width="130" height="25"
+						change="styleNameDDL_changeHandler(event)"/>
+		<s:Button id="refreshStyleBtn" x="215" y="8" width="25" height="25" icon="{ImageAssets.Refresh}"
+				  click="refreshStyleBtn_clickHandler(event)"
+				  toolTip="刷新样式列表" />
+	</s:Group>
+	
+	
+	
+	<s:Group id="skinNameG" width="100%" height="40">
+		<s:Label x="0" y="8" width="80" height="25" text="skinName：" textAlign="right" verticalAlign="middle"
+				 toolTip="皮肤名称" />
+		<s:DropDownList id="skinNameDDL" x="80" y="8" width="130" height="25" labelField="name"
+						change="skinNameDDL_changeHandler(event)" />
+		<s:Button id="refreshSkinBtn" x="215" y="8" width="25" height="25" icon="{ImageAssets.Refresh}"
+				  click="refreshSkinBtn_clickHandler(event)"
+				  toolTip="刷新皮肤列表" />
+	</s:Group>
+	
+</s:VGroup>

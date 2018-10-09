@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fileGroup:FileGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					 xmlns:s="library://ns.adobe.com/flex/spark" 
+					 xmlns:mx="library://ns.adobe.com/flex/mx"
+					 xmlns:fileGroup="app.fileGroup.*"
+					 width="415" height="515"
+					 creationComplete="creationCompleteHandler(event)"
+					 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.ImageAssets;
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<s:Image id="typeIcon" x="0" y="5" />
+	<s:Label id="typeLb" x="22" y="6" fontSize="14" />
+	<s:Group id="treeGroup" x="0" y="35">
+		<mx:Tree id="tree" width="415" height="445"
+				 itemRenderer="app.fileGroup.FileTreeItemRenderer"
+				 dragEnabled="true"
+				 dataProvider="{treeData}"
+				 />
+	</s:Group>
+	
+	<s:Button id="addBtn" x="360" y="0" width="25" height="25"
+			  icon="{ImageAssets.Add}" toolTip="打开/添加 数据包文件"
+			  click="addBtn_clickHandler(event)"
+			  />
+	<s:Button id="clearBtn" x="390" y="0" width="25" height="25"
+			  icon="{ImageAssets.Clear}" toolTip="清空已打开的数据包文件列表"
+			  click="clearBtn_clickHandler(event)"
+			  />
+	<s:Button id="allBtn" x="390" y="490" width="25" height="25"
+			  icon="{ImageAssets.All}" toolTip="将所有item添加至导出列表"
+			  click="allBtn_clickHandler(event)"
+			  />
+</fileGroup:FileGroup>

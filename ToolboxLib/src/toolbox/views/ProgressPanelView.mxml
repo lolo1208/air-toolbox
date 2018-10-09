@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<main:ProgressPanel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					xmlns:s="library://ns.adobe.com/flex/spark" 
+					xmlns:mx="library://ns.adobe.com/flex/mx"
+					xmlns:main="toolbox.views.*"
+					width="340" height="105" creationPolicy="all"
+					title="当前进度"
+					creationComplete="creationCompleteHandler(event)"
+					>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<mx:ProgressBar id="progressBar" x="20" y="20" width="300" height="30" labelPlacement="center" label="" mode="manual" />
+</main:ProgressPanel>

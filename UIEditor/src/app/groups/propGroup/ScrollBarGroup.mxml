@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:c="app.components.*"
+		 fontFamily="微软雅黑"
+		 width="100%" height="160"
+		 creationComplete="creationCompleteHandler(event)"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			import app.layers.Layer;
+			import app.layers.ScrollBarLayer;
+			import app.utils.LayerUtil;
+			
+			import mx.collections.ArrayList;
+			import mx.events.FlexEvent;
+			
+			import spark.events.IndexChangeEvent;
+			import spark.events.TextOperationEvent;
+			
+			
+			
+			/**
+			 * 滚动条属性
+			 */
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				directionDDL.dataProvider = new ArrayList([ "horizontal", "vertical" ]);
+			}
+			
+			
+			/**
+			 * 更新显示内容
+			 */
+			public function update():void
+			{
+				targetDDL.dataProvider = new ArrayList([{ name:"", layer:null }]);
+				targetDDL.selectedIndex = 0;
+				for(var i:int = 0; i < AppCommon.controller.currentContainer.numChildren; i++)
+				{
+					var layer:Layer = AppCommon.controller.currentContainer.getChildAt(i) as Layer;
+					if(layer != selectedLayer && (LayerUtil.isSprite(layer) || LayerUtil.isList(layer)) && layer.id != "")
+					{
+						targetDDL.dataProvider.addItem({ name:layer.id, layer:layer });
+						if(selectedLayer.targetLayer == layer)
+							targetDDL.selectedIndex = targetDDL.dataProvider.length-1;
+					}
+				}
+				
+				directionDDL.selectedItem = selectedLayer.direction;
+				sizeText.text = selectedLayer.size.toString();
+				
+				vaxText.text = selectedLayer.viewableArea.x.toString();
+				vayText.text = selectedLayer.viewableArea.y.toString();
+				vawText.text = selectedLayer.viewableArea.width.toString();
+				vahText.text = selectedLayer.viewableArea.height.toString();
+			}
+			
+			
+			
+			
+			/**
+			 * target
+			 */
+			protected function targetDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				selectedLayer.targetLayer = targetDDL.selectedItem.layer;
+			}
+			
+			
+			/**
+			 * direction
+			 */
+			protected function directionDDL_changeHandler(event:IndexChangeEvent):void
+			{
+				selectedLayer.direction = directionDDL.selectedItem;
+			}
+			
+			
+			/**
+			 * size
+			 */
+			protected function sizeText_changeHandler(event:TextOperationEvent):void
+			{
+				selectedLayer.size = uint(sizeText.text);
+			}
+			
+			
+			/**
+			 * viewableArea
+			 */
+			protected function viewableAreaText_changeHandler(event:TextOperationEvent):void
+			{
+				selectedLayer.viewableArea = new Rectangle(
+					int(vaxText.text), int(vayText.text), uint(vawText.text), uint(vahText.text)
+				);
+			}
+			
+			protected function viewableAreaLabel_clickHandler(event:MouseEvent):void
+			{
+				selectedLayer.viewableAreaVisible = !selectedLayer.viewableAreaVisible;
+			}
+			
+			
+			
+			
+			
+			/**
+			 * 当前选中的图层
+			 */
+			private function get selectedLayer():*
+			{
+				return AppCommon.controller.selectedLayer;
+			}
+		]]>
+	</fx:Script>
+	
+	
+	<s:Label y="8" width="80" height="25" text="target：" textAlign="right" verticalAlign="middle"
+			 toolTip="指定目标（只能是Sprite或List，需注意控件的生成顺序）" />
+	<s:DropDownList id="targetDDL" x="80" y="8" width="160" height="25" labelField="name"
+					change="targetDDL_changeHandler(event)" />
+	
+	
+	<s:Label y="48" width="80" height="25" textAlign="right" verticalAlign="middle"
+			 text="direction：" toolTip="方向"/>
+	<s:DropDownList id="directionDDL" x="80" y="48" width="160" height="25" labelField="name"
+					change="directionDDL_changeHandler(event)"
+					/>
+	
+
+	<s:Label y="88" width="80" height="25" textAlign="right" verticalAlign="middle"
+			 text="size：" toolTip="滚动条的尺寸，水平时为width，垂直时为height" />
+	<c:PTextInput id="sizeText" x="80" y="88" width="60" height="25" restrict="0-9"
+				  change="sizeText_changeHandler(event)" />
+	
+	
+	<s:Label y="128" width="78" height="25" fontSize="11" text="viewableArea :"
+			 textAlign="right" toolTip="内容的显示区域（滚动区域）&#13;点击在编辑器中 显示/隐藏" verticalAlign="middle"
+			 click="viewableAreaLabel_clickHandler(event)"/>
+	<c:PTextInput id="vaxText" x="80" y="128" width="35" height="25" restrict="0-9\-"
+				  change="viewableAreaText_changeHandler(event)" prompt="x" toolTip="x" />
+	<c:PTextInput id="vayText" x="121" y="128" width="35" height="25" restrict="0-9\-"
+				  change="viewableAreaText_changeHandler(event)" prompt="y" toolTip="y" />
+	<c:PTextInput id="vawText" x="162" y="128" width="36" height="25" restrict="0-9"
+				  change="viewableAreaText_changeHandler(event)" prompt="w" toolTip="width" />
+	<c:PTextInput id="vahText" x="204" y="128" width="36" height="25" restrict="0-9"
+				  change="viewableAreaText_changeHandler(event)" prompt="h" toolTip="height" />
+	
+</s:Group>

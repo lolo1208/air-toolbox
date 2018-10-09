@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<canvasGroup:Toolbar xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			  xmlns:s="library://ns.adobe.com/flex/spark" 
+			  xmlns:mx="library://ns.adobe.com/flex/mx"
+			  xmlns:canvasGroup="app.groups.canvasGroup.*"
+			  width="255" height="35" alpha="0.5"
+			  mouseOver="mouseEventHandler(event)"
+			  mouseOut="mouseEventHandler(event)"
+			  addedToStage="addedToStageHandler(event)"
+			  >
+	<fx:Script>
+		<![CDATA[
+			import app.common.ImageAssets;
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	
+	<s:ButtonBar id="toolsBB" x="5" y="5" width="51" height="25"
+				 iconField="icon" requireSelection="true"
+				 change="toolsBB_changeHandler(event)" >
+		<s:dataProvider>
+			<s:ArrayList>
+				<fx:Object icon="{ImageAssets.Arrow}" value="arrow" label="箭头工具，用于选择和拖动元件&#13;快捷键[Z]" />
+				<fx:Object icon="{ImageAssets.Hand}" value="hand" label="手型工具，拖动场景&#13;快捷键[Z]，快速切换键[Space]" />
+			</s:ArrayList>
+		</s:dataProvider>
+	</s:ButtonBar>
+	
+	<s:Button id="focusBtn" x="60" y="5" width="25" height="25" icon="{ImageAssets.Focus}"
+			  label="聚焦，将场景移位至所选元件处&#13;快捷键[C]"
+			  click="focusBtn_clickHandler(event)"
+			  />
+	<s:Button id="refreshBtn" x="87" y="5" width="25" height="25" icon="{ImageAssets.Refresh}"
+			  label="刷新当前容器内的所有元件&#13;快捷键[F5]"
+			  click="refreshBtn_clickHandler(event)"
+			  />
+	
+	<s:DropDownList id="zoomDDL" x="125" y="5" width="70" height="25"
+					toolTip="调整舞台显示尺寸&#13;快捷键[Ctrl + 1/2/3/4/5]"
+					change="zoomDDL_changeHandler(event)" selectedIndex="1"
+					>
+		<s:ArrayList>
+			<fx:Object label="50%" value="0.5" />
+			<fx:Object label="100%" value="1" />
+			<fx:Object label="200%" value="2" />
+			<fx:Object label="300%" value="3" />
+			<fx:Object label="400%" value="4" />
+		</s:ArrayList>
+	</s:DropDownList>
+	
+	<s:CheckBox id="colorCB" x="205" y="9" toolTip="启用或关闭纯色背景"
+				click="colorBG_eventHandler(event)"
+				/>
+	<mx:ColorPicker id="colorCP" x="222" y="5" width="25" height="25"
+					enabled="false" selectedColor="#999999"
+					change="colorBG_eventHandler(event)"
+					/>
+</canvasGroup:Toolbar>

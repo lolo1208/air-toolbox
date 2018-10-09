@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" 
+				autoDrawBackground="true" width="100%" height="24"
+				fontFamily="宋体" color="#333333"
+				dataChange="dataChangeHandler(event)"
+				doubleClickEnabled="true"
+				doubleClick="doubleClickHandler(event)"
+				rightMouseDown="rightMouseDownHandler(event)"
+				>
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			
+			import mx.events.FlexEvent;
+			
+			import spark.components.List;
+			
+			
+			
+			protected function dataChangeHandler(event:FlexEvent):void
+			{
+				if(data == null) return;
+				
+				nameText.text = data.name;
+				if(AppCommon.isUI) {
+					fpsText.text = "";
+				}
+				else {
+					fpsText.text = data.info.fps;
+				}
+			}
+			
+			
+			protected function doubleClickHandler(event:MouseEvent):void
+			{
+				AppCommon.app.changeInfoPanel.show(data);
+			}
+			
+			
+			protected function rightMouseDownHandler(event:MouseEvent):void
+			{
+				var tree:List = this.owner as List;
+				tree.selectedItem = this.data;
+				AppCommon.app.previewPanel.show(this.data);
+				event.stopImmediatePropagation();
+			}
+			
+			
+		]]>
+	</fx:Script>
+	
+	<s:Label id="nameText" x="15" y="0" height="100%" verticalAlign="middle" />
+	<s:Label id="fpsText" x="380" y="0" height="100%" verticalAlign="middle" />
+	
+</s:ItemRenderer>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:c="app.components.*"
+		 fontFamily="微软雅黑"
+		 width="100%" height="160"
+		 creationComplete="creationCompleteHandler(event)"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			import app.layers.ContainerLayer;
+			import app.layers.Layer;
+			import app.utils.LayerUtil;
+			
+			import mx.events.FlexEvent;
+			import mx.events.ItemClickEvent;
+			
+			import spark.events.TextOperationEvent;
+			
+			
+			/**
+			 * 容器属性
+			 */
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				
+			}
+			
+			
+			/**
+			 * 更新显示内容
+			 */
+			public function update():void
+			{
+				extContainerCB.selected = containerLayer.extContainer;
+				parentXMLText.text = containerLayer.parentXML;
+				depthText.text = containerLayer.depth;
+				
+				cTypeRBG.selectedValue = containerLayer.cType;
+				cTypeRBG.enabled = extContainerCB.selected;
+				
+				if(LayerUtil.isContainer()) {
+					extContainerCB.enabled = parentXMLText.enabled = depthText.enabled
+						= (AppCommon.canvas.containerTB.selectedIndex > 0);
+				}
+				if(!extContainerCB.enabled) cTypeRBG.enabled = false;
+			}
+			
+			
+			
+			
+			/**
+			 * 容器类型类型有改变
+			 * @param event
+			 */
+			protected function cTypeRBG_itemClickHandler(event:ItemClickEvent):void
+			{
+				containerLayer.cType = cTypeRBG.selectedValue as String;
+			}
+			
+			
+			/**
+			 * 是否是一个普通容器
+			 */
+			protected function extContainerCB_changeHandler(event:Event):void
+			{
+				containerLayer.extContainer = extContainerCB.selected;
+				cTypeRBG.enabled = extContainerCB.selected;
+			}
+			
+			
+			/**
+			 * 容器的XML父级的路径
+			 */
+			protected function parentXMLText_changeHandler(event:TextOperationEvent):void
+			{
+				containerLayer.parentXML = parentXMLText.text;
+			}
+			
+			
+			/**
+			 * 容器的图层深度
+			 */
+			protected function depthText_changeHandler(event:TextOperationEvent):void
+			{
+				containerLayer.depth = depthText.text;
+			}
+			
+			
+			
+			/**
+			 * 当前选中的图层
+			 */
+			private function get selectedLayer():Layer { return AppCommon.controller.selectedLayer; }
+			
+			private function get containerLayer():ContainerLayer { return selectedLayer as ContainerLayer; }
+		]]>
+	</fx:Script>
+	
+	
+	<fx:Declarations>
+		<s:RadioButtonGroup id="cTypeRBG" itemClick="cTypeRBG_itemClickHandler(event)"/>
+	</fx:Declarations>
+	
+	
+	<s:CheckBox id="extContainerCB" x="80" y="8" height="25" label="该容器继承至 Container"
+				change="extContainerCB_changeHandler(event)" />
+	
+	
+	<s:Label y="48" width="80" height="25" text="类别：" textAlign="right" verticalAlign="middle"/>
+	<s:RadioButton id="cTypeNormalRB" x="80" y="50" label="Normal" value="normal" groupName="cTypeRBG" />
+	<s:RadioButton id="cTypeComboBoxRB" x="156" y="50" label="ComboBox" value="comboBox" groupName="cTypeRBG" />
+	
+	
+	<s:Label y="88" width="80" height="25" text="parentXML：" textAlign="right" verticalAlign="middle" toolTip="XML父级的路径" />
+	<c:PTextInput id="parentXMLText" x="80" y="88" width="160" height="25" restrict="a-zA-z0-9." prompt="默认为xml的最外层"
+				  change="parentXMLText_changeHandler(event)" />
+	
+	
+	<s:Label y="128" width="80" height="25" text="depth：" textAlign="right" verticalAlign="middle"
+			 toolTip="图层深度" />
+	<c:PTextInput id="depthText" x="80" y="128" width="160" height="25" restrict="0-9" prompt="默认创建在最顶层"
+				  change="depthText_changeHandler(event)" />
+	
+</s:Group>

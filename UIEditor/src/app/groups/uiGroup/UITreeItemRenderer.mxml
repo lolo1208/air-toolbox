@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:MXTreeItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					  xmlns:s="library://ns.adobe.com/flex/spark" 
+					  xmlns:mx="library://ns.adobe.com/flex/mx"
+					  fontFamily="宋体" height="20"
+					  doubleClickEnabled="true"
+					  doubleClick="doubleClickHandler(event)"
+					  dataChange="dataChangeHandler(event)"
+					  >
+	<fx:Script>
+		<![CDATA[
+			import lolo.components.AlertText;
+			
+			import mx.controls.Tree;
+			import mx.events.FlexEvent;
+			
+			
+			protected function dataChangeHandler(event:FlexEvent):void
+			{
+				if(data == null) return;
+				
+				labelField.setStyle("color", data.isLdFile || data.isUI ? "#333333" : "#444444");
+				labelField.setStyle("fontWeight", data.isLdFile ? "bold" : "normal");
+				labelField.setStyle("fontSize", data.isLdFile ? 14 : 12);
+				
+			}
+			
+			
+			protected function doubleClickHandler(event:MouseEvent):void
+			{
+				var tree:Tree = owner as Tree;
+				if(treeListData.hasChildren) {
+					tree.expandItem(data, !tree.isItemOpen(data));
+				}
+				else {
+					Clipboard.generalClipboard.setData(ClipboardFormats.TEXT_FORMAT, data.name);
+					AlertText.show("sourceName已拷贝到剪切板", "succeeded").moveToStageMousePosition();
+				}
+			}
+			
+			
+			override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
+			{
+				super.updateDisplayList(unscaledWidth, unscaledHeight);
+				this.toolTip = (labelField.x + labelField.width + 20 > owner.width) ? data.name : "";
+			}
+		]]>
+	</fx:Script>
+	
+	<s:states>
+		<s:State name="normal" />
+		<s:State name="hovered" />
+		<s:State name="selected" />
+	</s:states>
+	<s:HGroup left="0" right="0" top="0" bottom="0" verticalAlign="middle">
+		<s:Rect id="indentationSpacer" width="{treeListData.indent}" percentHeight="100" alpha="0">
+			<s:fill>
+				<s:SolidColor color="0xFFFFFF" />
+			</s:fill>
+		</s:Rect>
+		<s:Group id="disclosureGroup">
+			<s:BitmapImage source="{treeListData.disclosureIcon}" visible="{treeListData.hasChildren}" />
+		</s:Group>
+		<!--<s:BitmapImage source="{treeListData.icon}" />-->
+		<s:Label id="labelField" text="{treeListData.label}" />
+	</s:HGroup>
+</s:MXTreeItemRenderer>

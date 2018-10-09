@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<exportPanel:ExportPanel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+						 xmlns:s="library://ns.adobe.com/flex/spark" 
+						 xmlns:mx="library://ns.adobe.com/flex/mx"
+						 xmlns:exportPanel="app.exportPanel.*"
+						 width="320" height="250"
+						 title="导出"
+						 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.ImageAssets;
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<s:RadioButtonGroup id="appType"/>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	
+	<s:Label x="25" y="25" width="100" height="25" text="图块宽高：" textAlign="right"
+			 verticalAlign="middle"/>
+	<s:TextInput id="cwText" x="130" y="25" width="45" height="25" text="512" restrict="0-9"/>
+	<s:TextInput id="chText" x="180" y="25" width="45" height="25" text="512" restrict="0-9"/>
+	
+	
+	<s:Label x="25" y="115" width="100" height="25" text="项目类型：" textAlign="right"
+			 verticalAlign="middle"/>
+	<s:RadioButton x="130" y="118" label="ActionScript" groupName="appType" value="1" selected="true"/>
+	<s:RadioButton x="225" y="118" label="HTML5" groupName="appType" value="2"/>
+	
+	
+	<s:Label x="25" y="70" width="100" height="25" text="缩略图最大宽高：" textAlign="right"
+			 verticalAlign="middle"/>
+	<s:TextInput id="twText" x="130" y="70" width="45" height="25" text="512" restrict="0-9"/>
+	<s:TextInput id="thText" x="180" y="70" width="45" height="25" text="512" restrict="0-9"/>
+	
+	
+	<s:Button id="exportBtn" x="130" y="165" width="80" height="30" label="导出" fontSize="14"
+			  click="exportBtn_clickHandler(event)"/>
+	<s:Button id="closeBtn" x="293" y="-26" width="20" height="20"
+			  icon="{ImageAssets.Close}"
+			  click="closeBtn_clickHandler(event)"/>
+	
+	
+</exportPanel:ExportPanel>

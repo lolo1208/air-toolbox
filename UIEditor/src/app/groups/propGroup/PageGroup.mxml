@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:propGroup="app.groups.propGroup.*"
+		 fontFamily="微软雅黑"
+		 creationComplete="creationCompleteHandler(event)"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			
+			
+			/**
+			 * 翻页组件属性
+			 */
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				firstBtnPropG.init("首页按钮的属性", "firstBtnProp");
+				lastBtnPropG.init("尾页按钮的属性", "lastBtnProp");
+				prevBtnPropG.init("上一页按钮的属性", "prevBtnProp");
+				nextBtnPropG.init("下一页按钮的属性", "nextBtnProp");
+				pageTextPropG.init("页码显示文本的属性", "pageTextProp");
+			}
+			
+			
+			
+			/**
+			 * 更新显示内容
+			 */
+			public function update():void
+			{
+				firstBtnPropG.update();
+				lastBtnPropG.update();
+				prevBtnPropG.update();
+				nextBtnPropG.update();
+				pageTextPropG.update();
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:VGroup width="100%" height="100%" gap="-1">
+		<propGroup:ChildComponentGroup id="firstBtnPropG" />
+		<propGroup:ChildComponentGroup id="lastBtnPropG" />
+		<propGroup:ChildComponentGroup id="prevBtnPropG" />
+		<propGroup:ChildComponentGroup id="nextBtnPropG" />
+		<propGroup:ChildComponentGroup id="pageTextPropG" />
+	</s:VGroup>
+	
+</s:Group>

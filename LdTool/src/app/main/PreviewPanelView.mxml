@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<main:PreviewPanel xmlns:fx="http://ns.adobe.com/mxml/2009"
+				   xmlns:s="library://ns.adobe.com/flex/spark"
+				   xmlns:mx="library://ns.adobe.com/flex/mx"
+				   xmlns:main="app.main.*"
+				   width="700" height="500" title="预览"
+				   creationComplete="creationCompleteHandler(event)"
+				   >
+	<fx:Script>
+		<![CDATA[
+			import app.common.ImageAssets;
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:Image id="typeIcon" x="10" y="14"/>
+	
+	<s:Label x="32" y="15" color="#666666" text="sourceName：" />
+	<s:Label id="snText" x="118" y="15" text="avatar.shabi.attack3" />
+	
+	<s:Label id="fpsLb" x="639" y="15"  color="#666666" text="FPS：" />
+	<s:Label id="fpsText" x="671" y="15" text="60" />
+</main:PreviewPanel>

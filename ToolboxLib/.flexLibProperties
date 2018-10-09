@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flexLibProperties includeAllClasses="true" useMultiPlatformConfig="false" version="3">
+  <includeClasses>
+    <classEntry path="toolbox.utils.Helper"/>
+    <classEntry path="toolbox.config.EmbedFontConfig"/>
+    <classEntry path="toolbox.config.LanguageConfig"/>
+    <classEntry path="toolbox.config.StyleConfig"/>
+    <classEntry path="toolbox.views.SettingsPanelView"/>
+    <classEntry path="toolbox.views.ProjectPanelView"/>
+  </includeClasses>
+  <includeResources/>
+  <namespaceManifests/>
+</flexLibProperties>

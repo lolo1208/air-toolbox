@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:uiGroup="app.groups.uiGroup.*"
+		 xmlns:aniGroup="app.groups.aniGroup.*"
+		 width="260" height="200"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.ImageAssets;
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<s:BorderContainer x="0" y="24" width="100%" height="100%" borderColor="#666666"/>
+	
+	<mx:ViewStack id="contentVS" x="0" y="25" width="100%" height="100%">
+		<uiGroup:UIGroupView id="uiGroup" width="100%" height="100%" label="　界面" />
+		<aniGroup:AniGroupView id="aniGroup" width="100%" height="100%" label="　动画" />
+	</mx:ViewStack>
+	
+	<s:TabBar x="0" y="0" width="170" height="25" dataProvider="{contentVS}"/>
+	
+	<s:Image x="17" y="7" source="{ImageAssets.UI}" mouseEnabled="false" mouseChildren="false" />
+	<s:Image x="102" y="6" source="{ImageAssets.Animation}" mouseEnabled="false" mouseChildren="false" />
+</s:Group>

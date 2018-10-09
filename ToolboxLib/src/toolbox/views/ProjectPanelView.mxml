@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<views:ProjectPanel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					xmlns:s="library://ns.adobe.com/flex/spark" 
+					xmlns:mx="library://ns.adobe.com/flex/mx"
+					xmlns:views="toolbox.views.*"
+					width="400" height="300" creationPolicy="all"
+					title="项目"
+					creationComplete="creationCompleteHandler(event)"
+					>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:Label x="10" y="10" text="历史项目："/>
+	<s:List id="projectList" x="10" y="30" width="378" height="145"
+			change="projectList_changeHandler(event)">
+	</s:List>
+	<s:Label x="10" y="197" text="项目地址："/>
+	<s:TextInput id="projectText" x="70" y="190" width="280" height="25"/>
+	<s:Button id="browseBtn" x="358" y="190" width="30" height="25" label="&gt;"
+			  click="browseBtn_clickHandler(event)"/>
+	<s:Button id="openBtn" x="70" y="225" width="80" height="25" label="打开项目"
+			  click="openBtn_clickHandler(event)" fontWeight="bold"/>
+	<s:Button id="cancelBtn" x="290" y="225" width="60" height="25" label="取消"
+			  click="cancelBtn_clickHandler(event)"/>
+</views:ProjectPanel>

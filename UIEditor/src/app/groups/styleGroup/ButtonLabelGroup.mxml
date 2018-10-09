@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 fontFamily="微软雅黑"
+		 width="100%" height="100%"
+		 creationComplete="creationCompleteHandler(event)" xmlns:validators="app.validators.*"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			import app.effects.AppEffect;
+			import app.layers.Layer;
+			import app.utils.FormatUtil;
+			
+			import lolo.components.AlertText;
+			import lolo.core.Common;
+			import lolo.utils.StringUtil;
+			
+			import mx.events.FlexEvent;
+			
+			import spark.events.TextOperationEvent;
+			
+			
+			/**FocusOut的时候，可能会先切换selectedLayer，所以这里需要自己保存着引用*/
+			private var _layer:Layer;
+			
+			
+			
+			
+			/**
+			 * 按钮的label样式
+			 */
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				
+			}
+			
+			
+			
+			/**
+			 * 更新显示内容
+			 */
+			public function update():void
+			{
+				_layer = AppCommon.controller.selectedLayer;
+				styleText.text = FormatUtil.getJsonString(selectedLayer.style.labelStyle);
+				updateHeight();
+				jsonValidator.validate();
+			}
+			
+			
+			
+			
+			/**
+			 * 更新该容器的高度
+			 */
+			private function updateHeight():void
+			{
+				_updateHeightCount = 0;
+				Common.stage.addEventListener(Event.ENTER_FRAME, doUpdateHeight);
+			}
+			
+			private var _updateHeightCount:int;
+			
+			private function doUpdateHeight(event:Event):void
+			{
+				_updateHeightCount++;
+				if(_updateHeightCount == 5) Common.stage.removeEventListener(Event.ENTER_FRAME, doUpdateHeight);
+				
+				styleText.height = int(styleText.textDisplay["contentHeight"]) + 5;
+				this.height = styleText.height + 40;
+				
+				AppCommon.controller.updateFrame();
+			}
+			
+			
+			
+			
+			protected function styleText_changeHandler(event:TextOperationEvent):void
+			{
+				updateHeight();
+			}
+			
+			
+			protected function styleText_focusInHandler(event:FocusEvent):void
+			{
+				AppCommon.keyboardUsing = true;
+			}
+			
+			
+			protected function styleText_focusOutHandler(event:FocusEvent):void
+			{
+				AppCommon.keyboardUsing = false;
+				styleText_keyUpHandler();
+			}
+			
+			protected function styleText_keyUpHandler(event:KeyboardEvent=null):void
+			{
+				if(event == null || (event.ctrlKey && event.keyCode == Keyboard.S))
+				{
+					var str:String = StringUtil.trim(styleText.text);
+					if(str == "") return;
+					
+					var color:uint = 0x00FF00;
+					try {
+						var obj:Object = JSON.parse(str);
+						selectedLayer.setStyle("labelStyle", obj);
+						styleText.text = FormatUtil.getJsonString(selectedLayer.style.labelStyle);
+					}
+					catch(error:Error) {
+						AlertText.show("设置文本样式失败！错误的JSON数据！", "failed").moveToStageMousePosition();
+						color = 0xFF0000;
+					}
+					
+					if(event != null) AppEffect.glowFilterAni(styleText, color);
+					
+					updateHeight();
+					jsonValidator.validate();
+				}
+			}
+			
+			
+			
+			
+			/**
+			 * 当前选中的图层
+			 */
+			private function get selectedLayer():Layer { return _layer; }
+		]]>
+	</fx:Script>
+	
+	
+	<fx:Declarations>
+		<validators:JsonValidator id="jsonValidator" required="false"
+								  source="{styleText}" property="text"
+								  trigger="{styleText}" triggerEvent="focusOut"
+								  />
+	</fx:Declarations>
+	
+	
+	<s:Rect x="1" width="100%" height="1"><s:fill><s:SolidColor color="#CCCCCC"/></s:fill></s:Rect>
+	
+	
+	<s:Label x="10" y="8" height="25" verticalAlign="middle" text="文本样式："
+			 toolTip="文本样式默认为所有状态，&#13;也可指定下列状态：&#13;　· upStyle&#13;　· overStyle&#13;　· downStyle&#13;　· disabledStyle&#13;　· selectedStyle"
+			 />
+	
+	
+	<s:TextArea id="styleText" x="9" y="35" width="227" height="25"
+				fontFamily="宋体"
+				change="styleText_changeHandler(event)"
+				focusIn="styleText_focusInHandler(event)"
+				focusOut="styleText_focusOutHandler(event)"
+				keyUp="styleText_keyUpHandler(event)"
+				/>
+</s:Group>

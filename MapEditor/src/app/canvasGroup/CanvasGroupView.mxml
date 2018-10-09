@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<canvasGroup:CanvasGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+						 xmlns:s="library://ns.adobe.com/flex/spark" 
+						 xmlns:mx="library://ns.adobe.com/flex/mx"
+						 xmlns:canvasGroup="app.canvasGroup.*"
+						 width="560" height="100" fontFamily="微软雅黑"
+						 creationComplete="creationCompleteHandler(event)"
+						 addedToStage="addedToStageHandler(event)"
+						 resize="resizeHandler(event)"
+						 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.ImageAssets;
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<s:HGroup id="tileGroup" y="3">
+		<s:Label width="40" height="25" text="区块：" toolTip="双击导出区块辅助线"
+				 doubleClickEnabled="true" textAlign="right" verticalAlign="middle"
+				 doubleClick="tileLabel_doubleClickHandler(event)"
+				 />
+		<s:TextInput id="twText" width="35" height="25" text="80" restrict="0-9" maxChars="3" toolTip="区块宽" />
+		<s:TextInput id="thText" width="35" height="25" text="40" restrict="0-9" maxChars="3" toolTip="区块高" />
+		<s:CheckBox id="staggeredCB" x="130" y="30" height="25" label="交错" toolTip="是否生成奇偶行交错区块"
+					mouseFocusEnabled="false" selected="false"
+					change="tileCB_changeHandler(event)"
+					/>
+		<s:Button id="createTileBtn" width="44" height="25" label="生成" toolTip="生成区块"
+				  mouseFocusEnabled="false"
+				  click="createTileBtn_clickHandler(event)"
+				  />
+	</s:HGroup>
+	
+	
+	<s:HGroup id="cbGroup" x="250" y="3">
+		<s:CheckBox id="tileCB" height="25" label="区块" toolTip="显示或隐藏区块。快捷键[Q]"
+					fontWeight="bold" mouseFocusEnabled="false" selected="true"
+					change="tileCB_changeHandler(event)"
+					/>
+		<s:CheckBox id="pointCB" height="25" label="坐标"  toolTip="显示或隐藏区块坐标。快捷键[W]"
+					mouseFocusEnabled="false"
+					change="pointCB_changeHandler(event)"
+					/>
+		<s:CheckBox id="indexCB" height="25" label="索引" toolTip="显示或隐藏区块特性索引。快捷键[E]"
+					mouseFocusEnabled="false"
+					change="indexCB_changeHandler(event)"
+					/>
+	</s:HGroup>
+	
+	
+	<s:HGroup id="featureGroup" x="415" y="3">
+		<s:TextInput id="featureText" width="50" height="25" color="#999999" text="特性" toolTip="配合箭头工具使用，标记区块特性"
+					 change="featureText_changeHandler(event)"
+					 focusIn="featureText_focusInOrOutHandler(event)"
+					 focusOut="featureText_focusInOrOutHandler(event)"
+					 />
+		<s:CheckBox id="impassabilityCB" height="25" label="障碍" toolTip="配合箭头工具使用，将区块标记成不可通行的障碍区块。快捷键[A]"
+					mouseFocusEnabled="false"
+					change="tileTypeCB_changeHandler(event)"
+					/>
+		<s:CheckBox id="coverCB" height="25" label="遮挡" toolTip="配合箭头工具使用，将区块标记成被遮挡的区块（Avatar移动至该区块时，将会半透明显示）。快捷键[S]"
+					mouseFocusEnabled="false"
+					change="tileTypeCB_changeHandler(event)"
+					/>
+	</s:HGroup>
+	
+	
+	<s:ButtonBar id="arrowBB" x="435" y="45" width="125" height="25" alpha="0.4"
+				 mouseFocusEnabled="false" requireSelection="true"
+				 iconField="icon" selectedIndex="0"
+				 mouseOver="arrowBB_mouseEventHandler(event)"
+				 mouseOut="arrowBB_mouseEventHandler(event)"
+				 change="arrowBB_changeHandler(event)"
+				 >
+		<s:dataProvider>
+			<s:ArrayList>
+				<fx:Object icon="{ImageAssets.Arrow}" value="arrow" label="箭头工具，用于区块相关操作。快捷键[Z]" />
+				<fx:Object icon="{ImageAssets.Hand}" value="hand" label="手型工具，拖动场景。快捷键[X]，快速切换[Space]" />
+				<fx:Object icon="{ImageAssets.Layer}" value="layer" label="选择图层工具。快捷键[C]" />
+				<fx:Object icon="{ImageAssets.Tile}" value="tile" label="选择区块工具。快捷键[V]" />
+				<fx:Object icon="{ImageAssets.ImageFocus}" value="focus" label="场景位置立即复位。快捷键[B]" />
+			</s:ArrayList>
+		</s:dataProvider>
+	</s:ButtonBar>
+	
+</canvasGroup:CanvasGroup>

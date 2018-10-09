@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<skinListGroup:SkinListGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+							 xmlns:s="library://ns.adobe.com/flex/spark" 
+							 xmlns:mx="library://ns.adobe.com/flex/mx"
+							 xmlns:skinListGroup="app.skinListGroup.*"
+							 fontFamily="微软雅黑"
+							 width="300" height="330"
+							 creationComplete="creationCompleteHandler(event)"
+							 resize="resizeHandler(event)"
+							 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.ImageAssets;
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	
+	<s:Label x="10" y="10" text="皮肤列表：" />
+	<s:List id="skinList" x="10" y="30" width="280" height="200" labelField="name"
+			itemRenderer="app.skinListGroup.SkinItemRenderer"
+			change="skinList_changeHandler(event)"
+			/>
+	
+	
+	<s:Button id="addBtn" x="250" y="10" width="16" height="16"
+			  icon="{ImageAssets.Add}" mouseFocusEnabled="false"
+			  click="addBtn_clickHandler(event)"
+			  />
+	
+	<s:Button id="removeBtn" x="274" y="10" width="16" height="16"
+			  icon="{ImageAssets.Remove}"  mouseFocusEnabled="false"
+			  click="removeBtn_clickHandler(event)"
+			  />
+	
+	
+	<s:Label id="nameLabel" x="10" y="247" text="皮肤名称："/>
+	<s:TextInput id="nameText" x="70" y="240" width="220" height="25"
+				 restrict="a-zA-Z0-9."
+				 change="nameText_changeHandler(event)"
+				 />
+	
+	
+	<s:Button id="saveBtn" x="10" y="285" width="280" height="30" label="保存更改，更新配置" toolTip="快捷键[Ctrl+S]"
+			  fontSize="14"
+			  click="saveBtn_clickHandler(event)"
+			  />
+	
+</skinListGroup:SkinListGroup>

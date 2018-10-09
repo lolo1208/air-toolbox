@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<logging:Logger xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+				xmlns:logging="app.logging.*"
+				width="300" height="100"
+				title="Logging"
+				>
+	<fx:Script>
+		<![CDATA[
+			import app.common.ImageAssets;
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<mx:HTML id="html" x="10" y="10" width="278" height="47" updateComplete="html_updateCompleteHandler(event)"/>
+	<s:Button id="closeBtn" x="273" y="-26" width="20" height="20"
+			  icon="{ImageAssets.Close}"
+			  click="closeBtn_clickHandler(event)"
+			  />
+</logging:Logger>

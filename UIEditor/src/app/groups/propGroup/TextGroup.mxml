@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:validators="app.validators.*"
+		 fontFamily="微软雅黑"
+		 width="100%" height="100%"
+		 creationComplete="creationCompleteHandler(event)"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			import app.common.ImageAssets;
+			import app.layers.BaseTextFieldLayer;
+			import app.layers.Layer;
+			import app.utils.LayerUtil;
+			
+			import lolo.core.Common;
+			import lolo.display.BaseTextField;
+			
+			import mx.events.FlexEvent;
+			
+			import spark.events.TextOperationEvent;
+			
+			import toolbox.config.LanguageConfig;
+			
+			
+			private var _isOpen:Boolean;
+			
+			
+			
+			/**
+			 * 文本框内容和语言包ID
+			 */
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				
+			}
+			
+			
+			
+			/**
+			 * 更新显示内容
+			 */
+			public function update():void
+			{
+				textText.text = tfLayer.text;
+				textIDText.text = textField.textID;
+				_isOpen = true;
+				
+				if(textIDText.text != "") {
+					textText.text = "";
+					textID = textIDText.text;
+					tfLayer.tipsText = textField.text;
+				}
+				tips = tfLayer.tipsText;
+				updateHeight();
+			}
+			
+			
+			
+			/**
+			 * 更新该容器的高度
+			 */
+			private function updateHeight():void
+			{
+				openIcon.visible = !_isOpen;
+				closeIcon.visible = _isOpen;
+				border.visible
+					= textText.visible
+					= tipsLabel.visible = tipsText.visible
+					= textIDLabel.visible = textIDText.visible
+					= refreshBtn.visible
+					= _isOpen;
+				
+				_updateHeightCount = 0;
+				Common.stage.addEventListener(Event.ENTER_FRAME, doUpdateHeight);
+			}
+			
+			private var _updateHeightCount:int;
+			
+			private function doUpdateHeight(event:Event):void
+			{
+				_updateHeightCount++;
+				if(_updateHeightCount == 5) Common.stage.removeEventListener(Event.ENTER_FRAME, doUpdateHeight);
+				
+				textText.height = int(textText.textDisplay["contentHeight"]) + 5;
+				
+				tipsLabel.y = textText.y + textText.height + 10;
+				tipsText.y = tipsLabel.y + tipsLabel.height;
+				tipsText.height = int(tipsText.textDisplay["contentHeight"]) + 5;
+				
+				textIDLabel.y = textIDText.y = refreshBtn.y
+					= tipsText.y + tipsText.height + 10;
+				
+				border.height = textIDLabel.y + textIDLabel.height + 5;
+				this.height = _isOpen ? border.height + 5 : 33;
+				
+				AppCommon.controller.updateFrame();
+			}
+			
+			
+			
+			
+			protected function openOrClose(event:MouseEvent):void
+			{
+				_isOpen = !_isOpen;
+				updateHeight();
+			}
+			
+			
+			
+			
+			protected function textText_changeHandler(event:TextOperationEvent=null):void
+			{
+				textID = "";
+				tfLayer.text = textText.text;
+				tips = textField.text;
+				updateHeight();
+			}
+			
+			protected function tipsText_changeHandler(event:TextOperationEvent):void
+			{
+				tfLayer.tipsText = tipsText.text;
+				if(tipsText.text == "") {
+					if(textText.text != "") textText_changeHandler();
+					else if(textIDText.text != "") textIDText_changeHandler();
+				}
+				updateHeight();
+			}
+			
+			protected function textIDText_changeHandler(event:TextOperationEvent=null):void
+			{
+				text = "";
+				textField.textID = textIDText.text;
+				tips = textField.text;
+				updateHeight();
+			}
+			
+			
+			
+			private function set text(value:String):void
+			{
+				textText.text = tfLayer.text = value;
+			}
+			
+			private function set textID(value:String):void
+			{
+				textIDText.text = textField.textID = value;
+			}
+			
+			private function set tips(value:String):void
+			{
+				tipsText.text = tfLayer.tipsText = value;
+			}
+			
+			
+			
+			protected function text_focusEventHandler(event:FocusEvent):void
+			{
+				AppCommon.keyboardUsing = (event.type == FocusEvent.FOCUS_IN);
+			}
+			
+			
+			protected function refreshBtn_clickHandler(event:MouseEvent):void
+			{
+				LanguageConfig.load(refreshTextID);
+			}
+			
+			private function refreshTextID():void
+			{
+				if(textIDText.text != "") textIDText_changeHandler();
+			}
+			
+			
+			
+			
+			/**
+			 * 当前选中的图层
+			 */
+			private function get selectedLayer():Layer { return AppCommon.controller.selectedLayer; }
+			
+			private function get tfLayer():BaseTextFieldLayer { return selectedLayer as BaseTextFieldLayer; }
+			
+			private function get textField():BaseTextField { return LayerUtil.getTextField(); }
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+	</fx:Declarations>
+	
+	<s:BorderContainer id="border" x="5" width="235" height="165" borderColor="0xCCCCCC" />
+	
+	<s:Image id="openIcon" x="83" y="15" click="openOrClose(event)" source="{ImageAssets.Add}" />
+	<s:Image id="closeIcon" x="82" y="10" click="openOrClose(event)" source="{ImageAssets.Min}" />
+	<s:Label x="98" y="8" height="25" verticalAlign="middle" text="文本" toolTip="文本的实际内容"
+			 click="openOrClose(event)" />
+	
+	<s:TextArea id="textText" x="9" y="35" width="227" height="25"
+				change="textText_changeHandler(event)"
+				focusIn="text_focusEventHandler(event)"
+				focusOut="text_focusEventHandler(event)"
+				/>
+	
+	
+	<s:Label id="tipsLabel" x="98" y="70" height="25" verticalAlign="middle" text="替代文本"
+			 toolTip="在界面编辑器中显示的文本" />
+	<s:TextArea id="tipsText" x="9" y="95" width="227" height="25"
+				change="tipsText_changeHandler(event)"
+				focusIn="text_focusEventHandler(event)"
+				focusOut="text_focusEventHandler(event)"
+				/>
+	
+	
+	<s:Label id="textIDLabel" x="36" y="135" height="25" verticalAlign="middle" text="语言包ID："
+			 toolTip="文本在语言包中的ID" />
+	<s:TextInput id="textIDText" x="98" y="135" width="75" height="25"
+				 change="textIDText_changeHandler(event)"
+				 focusIn="text_focusEventHandler(event)"
+				 focusOut="text_focusEventHandler(event)"
+				 />
+	<s:Button id="refreshBtn" x="178" y="135" width="25" height="25"
+			  icon="{ImageAssets.Refresh}" toolTip="刷新语言包"
+			  click="refreshBtn_clickHandler(event)"
+			  />
+</s:Group>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<toolbox version="2.3.4" url="[host]Toolbox.exe" />
+	
+	<animationPackager version="1.1.9" url="[host]AnimationPackager.exe" />
+	<uiPackager version="1.4.7" url="[host]UIPackager.exe" />
+	<skinEditor version="1.0.7" url="[host]SkinEditor.exe" />
+	<uiEditor version="1.4.0" url="[host]UIEditor.exe" />
+	
+	<ldTool version="1.1.0" url="[host]LdTool.exe" />
+	<batchTool version="1.3.6" url="[host]BatchTool.exe" />
+	
+	<mapEditor version="1.2.4" url="[host]MapEditor.exe" />
+</config>

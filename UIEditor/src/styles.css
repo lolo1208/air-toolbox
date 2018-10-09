@@ -1,0 +1,19 @@
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+
+
+mx|ToolTip
+{
+	fontFamily		: "微软雅黑";
+	fontSize		: 14;
+	color			: white;
+	backgroundColor	: black;
+	backgroundAlpha	: 0.8;
+	cornerRadius	: 5;
+}
+
+s|SkinnableContainer
+{
+	fontFamily	: "微软雅黑";
+	fontSize	: 12;
+}

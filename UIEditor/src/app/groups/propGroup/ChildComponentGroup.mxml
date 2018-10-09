@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:validators="app.validators.*"
+		 fontFamily="微软雅黑"
+		 width="100%" height="70"
+		 creationComplete="creationCompleteHandler(event)"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import app.common.AppCommon;
+			import app.common.ImageAssets;
+			import app.effects.AppEffect;
+			import app.layers.Layer;
+			import app.utils.FormatUtil;
+			
+			import lolo.core.Common;
+			
+			import mx.events.FlexEvent;
+			
+			import spark.events.TextOperationEvent;
+			
+			
+			/**FocusOut的时候，可能会先切换selectedLayer，所以这里需要自己保存着引用*/
+			private var _layer:Layer;
+			
+			private var _propName:String;
+			private var _isOpen:Boolean;
+			
+			
+			
+			/**
+			 * 子组件属性。首页按钮、尾页按钮、上一页按钮、下一页按钮等...
+			 */
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				
+			}
+			
+			
+			/**
+			 * 初始化
+			 */
+			public function init(title:String, propName:String):void
+			{
+				titleText.text = title;
+				_propName = propName;
+			}
+			
+			
+			
+			
+			/**
+			 * 更新显示内容
+			 */
+			public function update(glow:Boolean=false):void
+			{
+				_layer = AppCommon.controller.selectedLayer;
+				_isOpen = selectedLayer[_propName] != "" && selectedLayer[_propName] != null;
+				
+				var color:uint = 0x00FF00;
+				try {
+					propsText.text = "";
+					propsText.text = selectedLayer[_propName];
+					propsText.text = FormatUtil.getJsonString(JSON.parse(selectedLayer[_propName]));
+				}
+				catch(error:Error) {
+					color = 0xFF0000;
+				}
+				
+				if(glow) AppEffect.glowFilterAni(propsText, color);
+				
+				jsonValidator.validate();
+				updateHeight();
+			}
+			
+			
+			/**
+			 * 更新该容器的高度
+			 */
+			private function updateHeight():void
+			{
+				openIcon.visible = !_isOpen;
+				closeIcon.visible = _isOpen;
+				propsText.visible = border.visible = _isOpen;
+				
+				_updateHeightCount = 0;
+				Common.stage.addEventListener(Event.ENTER_FRAME, doUpdateHeight);
+			}
+			
+			private var _updateHeightCount:int;
+			
+			private function doUpdateHeight(event:Event):void
+			{
+				_updateHeightCount++;
+				if(_updateHeightCount == 5) Common.stage.removeEventListener(Event.ENTER_FRAME, doUpdateHeight);
+				
+				var height:int = int(propsText.textDisplay["contentHeight"]) + 5;
+				propsText.height = height;
+				border.height = propsText.y + height + 5;
+				this.height = _isOpen ? border.height + 5 : 33;
+			}
+			
+			
+			
+			
+			protected function openOrClose(event:MouseEvent):void
+			{
+				_isOpen = !_isOpen;
+				updateHeight();
+			}
+			
+			
+			
+			
+			protected function propsText_changeHandler(event:TextOperationEvent):void
+			{
+				updateHeight();
+			}
+			
+			protected function propsText_focusInHandler(event:FocusEvent):void
+			{
+				AppCommon.keyboardUsing = true;
+			}
+			
+			protected function propsText_focusOutHandler(event:FocusEvent):void
+			{
+				AppCommon.keyboardUsing = false;
+				selectedLayer[_propName] = propsText.text;
+				AppCommon.prop.updateBounds();
+				update();
+			}
+			
+			protected function propsText_keyUpHandler(event:KeyboardEvent):void
+			{
+				if(event.ctrlKey && event.keyCode == Keyboard.S) {
+					selectedLayer[_propName] = propsText.text;
+					AppCommon.prop.updateBounds();
+					update(true);
+				}
+			}
+			
+			
+			
+			
+			
+			/**
+			 * 当前选中的图层
+			 */
+			private function get selectedLayer():Layer { return _layer; }
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<validators:JsonValidator id="jsonValidator" required="false"
+								  source="{propsText}" property="text"
+								  trigger="{propsText}" triggerEvent="focusOut"
+								  />
+	</fx:Declarations>
+	
+	<s:BorderContainer id="border" x="5" width="235" height="65" borderColor="0xCCCCCC" />
+	
+	<s:TextArea id="propsText" x="9" y="35" width="227" height="25"
+				fontFamily="宋体"
+				change="propsText_changeHandler(event)"
+				focusIn="propsText_focusInHandler(event)"
+				focusOut="propsText_focusOutHandler(event)"
+				keyUp="propsText_keyUpHandler(event)"
+				/>
+	
+	<s:Label id="titleText" x="98" y="8" height="25" verticalAlign="middle" text="子组件属性" toolTip="子组件的属性"
+			 click="openOrClose(event)" />
+	
+	<s:Image id="openIcon" x="83" y="15" click="openOrClose(event)" source="{ImageAssets.Add}" />
+	<s:Image id="closeIcon" x="82" y="10" click="openOrClose(event)" source="{ImageAssets.Min}" />
+</s:Group>

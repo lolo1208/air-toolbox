@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fileGroup:FileGroup xmlns:fx="http://ns.adobe.com/mxml/2009"
+					 xmlns:s="library://ns.adobe.com/flex/spark"
+					 xmlns:mx="library://ns.adobe.com/flex/mx"
+					 xmlns:fileGroup="app.fileGroup.*" fontFamily="微软雅黑"
+					 width="270" height="290"
+					 resize="resizeHandler(event)"
+					 >
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<s:Label x="10" y="10" text="动画文件夹列表："/>
+	<fileGroup:FileTree id="fileTree" x="10" y="30" width="250" height="110"
+						itemRenderer="app.fileGroup.FileTreeItemRenderer" labelField="name"
+						change="fileTree_changeHandler(event)" />
+	
+	
+	<s:Label id="selectedFileListTileText" x="10" y="160" text="选中的动画列表："/>
+	<fileGroup:SelectedFileList
+		id="selectedFileList" x="10" y="180" width="250" height="100"
+		itemRenderer="app.fileGroup.SelectedFileItemRenderer"
+		change="selectedFileList_changeHandler(event)"
+		/>
+	
+</fileGroup:FileGroup>
